@@ -1,0 +1,8 @@
+# Add these lines to your .env file
+# Copy and paste at the end of your .env file
+
+# Paystack Configuration
+PAYSTACK_PUBLIC_KEY=pk_test_136958e9da0c7d27ad6aec58947641796fac1ea8
+PAYSTACK_SECRET_KEY=sk_test_7ca619ab7de87f3c9c1e7a8ce9b284a7027fc2db
+PAYSTACK_MERCHANT_EMAIL=estherjohnson83@gmail.com
+
