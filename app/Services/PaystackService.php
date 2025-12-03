@@ -34,6 +34,7 @@ class PaystackService
                 'reference' => $data['reference'] ?? $this->generateReference(),
                 'callback_url' => $data['callback_url'] ?? route('payment.callback'),
                 'metadata' => $data['metadata'] ?? [],
+                'channels' => ['card', 'bank', 'mobile_money', 'ussd', 'qr'], // Enable all payment channels
             ]);
 
             if ($response->successful() && $response->json('status')) {

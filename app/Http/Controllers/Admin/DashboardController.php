@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\User;
 use App\Models\Notification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
@@ -16,10 +17,10 @@ class DashboardController extends Controller
     public function index()
     {
         // Get statistics
-        $totalRevenue = Order::where('payment_status', 'paid')->sum('total');
-        $totalOrders = Order::count();
-        $totalProducts = Product::count();
-        $totalCustomers = User::where('role', 'customer')->count();
+        $totalRevenue = (float) Order::where('payment_status', 'paid')->sum('total');
+        $totalOrders = (int) Order::count();
+        $totalProducts = (int) Product::count();
+        $totalCustomers = (int) User::where('role', 'customer')->count();
 
         // Recent orders
         $recentOrders = Order::with('items')
@@ -37,34 +38,6 @@ class DashboardController extends Controller
                 ];
             });
 
-        // Statistics with changes (mock for now)
-        $stats = [
-            [
-                'name' => 'Total Revenue',
-                'value' => 'GH₵' . number_format($totalRevenue, 2),
-                'change' => '+12.5%',
-                'changeType' => 'positive',
-            ],
-            [
-                'name' => 'Orders',
-                'value' => (string)$totalOrders,
-                'change' => '+8.2%',
-                'changeType' => 'positive',
-            ],
-            [
-                'name' => 'Products',
-                'value' => (string)$totalProducts,
-                'change' => '+' . Product::whereDate('created_at', today())->count(),
-                'changeType' => 'positive',
-            ],
-            [
-                'name' => 'Customers',
-                'value' => (string)$totalCustomers,
-                'change' => '+15.3%',
-                'changeType' => 'positive',
-            ],
-        ];
-
         // Get unread notifications
         $unreadNotifications = Notification::unread()
             ->latest()
@@ -72,9 +45,9 @@ class DashboardController extends Controller
             ->get();
 
         // Low stock products (less than 20 units)
-        $lowStockProducts = Product::where('stock', '<', 20)->count();
+        $lowStockProducts = (int) Product::where('stock', '<', 20)->count();
 
-        return Inertia::render('admin/dashboard', [
+        $dashboardData = [
             'stats' => [
                 'totalProducts' => $totalProducts,
                 'totalOrders' => $totalOrders,
@@ -83,6 +56,10 @@ class DashboardController extends Controller
             ],
             'recentOrders' => $recentOrders,
             'notifications' => $unreadNotifications,
-        ]);
+        ];
+
+        Log::info('Dashboard data being returned:', $dashboardData);
+
+        return Inertia::render('admin/dashboard', $dashboardData);
     }
 }

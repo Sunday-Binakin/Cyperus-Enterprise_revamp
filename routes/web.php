@@ -13,6 +13,11 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
+use Laravel\Fortify\Fortify;
+
+// Register Fortify routes
+require __DIR__.'/../vendor/laravel/fortify/routes/routes.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +41,17 @@ Route::get('/order-success/{orderNumber}', [CheckoutController::class, 'success'
 // Payment
 Route::get('/payment/callback', [PaymentController::class, 'callback'])->name('payment.callback');
 Route::post('/payment/webhook', [PaymentController::class, 'webhook'])->name('payment.webhook');
+Route::get('/payment/status', [PaymentController::class, 'checkStatus'])->name('payment.status');
+Route::get('/payment-test', function() {
+    return Inertia::render('payment-test');
+})->name('payment.test');
+
+// Test payment verification
+Route::get('/test-payment/{reference}', function($reference) {
+    $paystack = new \App\Services\PaystackService();
+    $result = $paystack->verifyPayment($reference);
+    return response()->json($result);
+});
 
 // Messages (Form Submissions)
 Route::post('/contact', [MessageController::class, 'store'])->name('contact.submit');

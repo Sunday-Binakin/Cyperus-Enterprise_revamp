@@ -25,16 +25,28 @@ class PaymentController extends Controller
      */
     public function callback(Request $request)
     {
+        Log::info('Payment callback received', [
+            'query_params' => $request->query(),
+            'all_params' => $request->all()
+        ]);
+
         $reference = $request->query('reference');
 
         if (!$reference) {
+            Log::error('Payment callback: Missing reference');
             return redirect()->route('home')->with('error', 'Invalid payment reference');
         }
 
         // Verify payment with Paystack
         $verification = $this->paystack->verifyPayment($reference);
 
+        Log::info('Payment verification result', [
+            'reference' => $reference,
+            'verification' => $verification
+        ]);
+
         if (!$verification['status']) {
+            Log::error('Payment verification failed', $verification);
             return redirect()->route('home')->with('error', 'Payment verification failed');
         }
 
@@ -44,8 +56,15 @@ class PaymentController extends Controller
         $transaction = Transaction::where('reference', $reference)->first();
 
         if (!$transaction) {
+            Log::error('Transaction not found', ['reference' => $reference]);
             return redirect()->route('home')->with('error', 'Transaction not found');
         }
+
+        Log::info('Transaction found', [
+            'reference' => $reference,
+            'current_status' => $transaction->status,
+            'payment_status' => $paymentData['status']
+        ]);
 
         // Check if already processed
         if ($transaction->status === 'success') {
@@ -59,18 +78,36 @@ class PaymentController extends Controller
         try {
             DB::beginTransaction();
 
+            // Determine final status based on Paystack response
+            $paystackStatus = $paymentData['status'];
+            $finalStatus = 'failed';
+            $paidAt = null;
+            $orderStatus = 'cancelled';
+            $paymentStatus = 'failed';
+
+            if ($paystackStatus === 'success') {
+                $finalStatus = 'success';
+                $paidAt = now();
+                $orderStatus = 'processing';
+                $paymentStatus = 'paid';
+            } elseif ($paystackStatus === 'abandoned') {
+                // User abandoned payment - redirect to checkout with message
+                DB::rollBack();
+                return redirect()->route('checkout')->with('error', 'Payment was cancelled. Please try again.');
+            }
+
             // Update transaction
             $transaction->update([
                 'transaction_id' => $paymentData['id'],
-                'status' => $paymentData['status'] === 'success' ? 'success' : 'failed',
+                'status' => $finalStatus,
                 'channel' => $paymentData['channel'] ?? null,
-                'paid_at' => $paymentData['status'] === 'success' ? now() : null,
+                'paid_at' => $paidAt,
                 'gateway_response' => $paymentData,
             ]);
 
             $order = $transaction->order;
 
-            if ($paymentData['status'] === 'success') {
+            if ($finalStatus === 'success') {
                 // Update order
                 $order->update([
                     'payment_status' => 'paid',
@@ -107,13 +144,18 @@ class PaymentController extends Controller
             } else {
                 // Payment failed
                 $order->update([
-                    'payment_status' => 'failed',
-                    'status' => 'cancelled',
+                    'payment_status' => $paymentStatus,
+                    'status' => $orderStatus,
                 ]);
 
                 DB::commit();
 
-                return redirect()->route('home')->with('error', 'Payment failed. Please try again.');
+                Log::info('Payment failed for order: ' . $order->order_number, [
+                    'paystack_status' => $paymentStatus,
+                    'reference' => $reference
+                ]);
+
+                return redirect()->route('checkout')->with('error', 'Payment failed. Please try again.');
             }
 
         } catch (\Exception $e) {
@@ -129,9 +171,19 @@ class PaymentController extends Controller
      */
     public function webhook(Request $request)
     {
+        Log::info('Paystack webhook received', [
+            'headers' => $request->headers->all(),
+            'body' => $request->getContent()
+        ]);
+
         // Verify webhook signature
         $signature = $request->header('x-paystack-signature');
         $payload = $request->getContent();
+
+        if (!$signature) {
+            Log::warning('Missing Paystack webhook signature');
+            return response()->json(['error' => 'Missing signature'], 401);
+        }
 
         if (!$this->paystack->verifyWebhookSignature($signature, $payload)) {
             Log::warning('Invalid Paystack webhook signature');
@@ -139,14 +191,17 @@ class PaymentController extends Controller
         }
 
         $event = $request->all();
+        Log::info('Paystack webhook event', ['event' => $event]);
 
         // Handle different event types
         switch ($event['event']) {
             case 'charge.success':
+                Log::info('Processing successful charge');
                 $this->handleSuccessfulCharge($event['data']);
                 break;
 
             case 'charge.failed':
+                Log::info('Processing failed charge');
                 $this->handleFailedCharge($event['data']);
                 break;
 
@@ -252,5 +307,68 @@ class PaymentController extends Controller
         } catch (\Exception $e) {
             Log::error('Webhook failed charge error: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Check payment status (for frontend polling)
+     */
+    public function checkStatus(Request $request)
+    {
+        $reference = $request->get('reference');
+        
+        if (!$reference) {
+            return response()->json(['error' => 'Reference required'], 400);
+        }
+
+        $transaction = Transaction::where('reference', $reference)->first();
+        
+        if (!$transaction) {
+            return response()->json(['error' => 'Transaction not found'], 404);
+        }
+
+        // If still pending, check with Paystack
+        if ($transaction->status === 'pending') {
+            $verification = $this->paystack->verifyPayment($reference);
+            
+            if ($verification['status']) {
+                $paymentData = $verification['data'];
+                
+                if ($paymentData['status'] === 'success') {
+                    // Update transaction and order
+                    DB::beginTransaction();
+                    
+                    $transaction->update([
+                        'transaction_id' => $paymentData['id'],
+                        'status' => 'success',
+                        'channel' => $paymentData['channel'] ?? null,
+                        'paid_at' => now(),
+                        'gateway_response' => $paymentData,
+                    ]);
+
+                    $order = $transaction->order;
+                    $order->update([
+                        'payment_status' => 'paid',
+                        'paid_at' => now(),
+                        'status' => 'processing',
+                    ]);
+
+                    // Reduce stock
+                    foreach ($order->items as $item) {
+                        $product = $item->product;
+                        if ($product) {
+                            $product->decrement('stock', $item->quantity);
+                        }
+                    }
+
+                    DB::commit();
+                }
+            }
+        }
+
+        return response()->json([
+            'status' => $transaction->status,
+            'payment_status' => $transaction->order->payment_status ?? null,
+            'order_number' => $transaction->order->order_number ?? null,
+        ]);
     }
 }

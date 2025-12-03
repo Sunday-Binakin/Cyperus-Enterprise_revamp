@@ -2,6 +2,8 @@ import { Head } from '@inertiajs/react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { CheckCircle } from 'lucide-react';
+import { useCart } from '@/store/cartHooks';
+import { useEffect } from 'react';
 
 interface OrderSuccessProps {
   order: {
@@ -21,6 +23,12 @@ interface OrderSuccessProps {
 }
 
 export default function OrderSuccess({ order }: OrderSuccessProps) {
+  const { clearCart } = useCart();
+
+  // Clear the cart after successful payment
+  useEffect(() => {
+    clearCart();
+  }, [clearCart]);
   return (
     <>
       <Head title="Order Successful" />

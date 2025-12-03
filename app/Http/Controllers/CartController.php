@@ -11,6 +11,6 @@ class CartController extends Controller
     {
         // Cart is managed on frontend with Redux
         // This just renders the cart page
-        return Inertia::render('Cart');
+        return Inertia::render('cart');
     }
 }

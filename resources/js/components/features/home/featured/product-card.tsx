@@ -62,7 +62,7 @@ export default function ProductCard({ id, name, price, image }: ProductCardProps
 
   const handleClick = () => {
     if (isInCart) {
-      router.visit('/cart');
+      router.visit('/checkout');
     } else {
       addToCart();
     }
@@ -95,7 +95,7 @@ export default function ProductCard({ id, name, price, image }: ProductCardProps
         >
           <TiShoppingCart className={`text-xl mr-2 transition-transform duration-300 ${isAdding ? 'scale-110' : ''}`} />
           <span>
-            {isAdding ? 'ADDING...' : isInCart ? 'VIEW BASKET' : 'ADD TO BASKET'}
+            {isAdding ? 'ADDING...' : isInCart ? 'CHECKOUT' : 'ADD TO BASKET'}
           </span>
         </button>
       </div>

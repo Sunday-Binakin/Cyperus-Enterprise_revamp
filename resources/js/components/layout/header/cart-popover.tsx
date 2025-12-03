@@ -4,7 +4,11 @@ import { Link } from '@inertiajs/react';
 import { Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
-export default function CartPopover() {
+interface CartPopoverProps {
+  onClose?: () => void;
+}
+
+export default function CartPopover({ onClose }: CartPopoverProps) {
   const { items, getTotalPrice, removeItem, updateQuantity } = useCart();
   const totalPrice = getTotalPrice();
   const formattedTotal = new Intl.NumberFormat('en-GH', {
@@ -28,8 +32,8 @@ export default function CartPopover() {
   };
 
   return (
-    <div className="absolute right-0 mt-2 w-96 bg-black rounded-lg shadow-2xl border border-gray-800 z-50 animate-slide-in">
-      <div className="p-6">
+    <div className="bg-black rounded-lg shadow-2xl border border-gray-800 animate-slide-in max-h-[70vh] overflow-hidden flex flex-col">
+      <div className="p-6 flex-1 overflow-y-auto">
         {items.length > 0 ? (
           <>
             <div className="mb-4">
@@ -108,12 +112,16 @@ export default function CartPopover() {
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <Link
-                href="/cart"
+              <button
+                onClick={() => {
+                  onClose?.();
+                  // Use window.location for immediate navigation to ensure popover closes
+                  window.location.href = '/cart';
+                }}
                 className="bg-gray-800 text-white px-4 py-3 rounded-lg text-center text-sm font-medium hover:bg-gray-700 transition-colors border border-gray-700"
               >
                 View Basket
-              </Link>
+              </button>
               <button
                 onClick={handleProceedToCheckout}
                 className="bg-[#EFE554] text-black px-4 py-3 rounded-lg text-center text-sm hover:bg-[#dbd348] transition-colors font-semibold"

@@ -28,11 +28,14 @@ class CheckoutController extends Controller
     {
         return Inertia::render('checkout', [
             'paystack_public_key' => $this->paystack->getPublicKey(),
+            'flash' => session('flash') ?? session()->all(),
         ]);
     }
 
     public function store(Request $request)
     {
+        Log::info('Checkout store method called', $request->all());
+        
         $validated = $request->validate([
             'customer_name' => 'required|string|max:255',
             'customer_email' => 'required|email|max:255',
@@ -157,6 +160,14 @@ class CheckoutController extends Controller
                 ],
             ]);
 
+            Log::info('Payment initialization result', [
+                'reference' => $reference,
+                'amount' => $total,
+                'email' => $validated['customer_email'],
+                'status' => $paymentData['status'],
+                'response' => $paymentData
+            ]);
+
             if (!$paymentData['status']) {
                 DB::rollBack();
                 Log::error('Payment initialization failed: ' . $paymentData['message']);
@@ -171,10 +182,21 @@ class CheckoutController extends Controller
 
             DB::commit();
 
-            // Return the payment URL to the frontend for redirect
-            return back()->with([
-                'payment_url' => $paymentData['data']['authorization_url'],
+            // Return the payment reference and authorization URL for frontend processing
+            Log::info('Returning success response with payment data', [
+                'reference' => $reference,
+                'amount' => $total,
                 'order_number' => $order->order_number,
+                'authorization_url' => $paymentData['data']['authorization_url'],
+            ]);
+            
+            return redirect()->route('checkout')->with([
+                'payment_reference' => $reference,
+                'order_number' => $order->order_number,
+                'payment_amount' => $total,
+                'customer_email' => $validated['customer_email'],
+                'authorization_url' => $paymentData['data']['authorization_url'],
+                'success' => 'Order created successfully. Redirecting to payment...',
             ]);
 
         } catch (\Exception $e) {

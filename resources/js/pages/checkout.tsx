@@ -1,17 +1,24 @@
-import { Head, useForm, router } from '@inertiajs/react';
-import { useState } from 'react';
+import { Head, useForm, router, usePage } from '@inertiajs/react';
+import { useState, useEffect } from 'react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { useCart } from '@/store/cartHooks';
 
 interface CheckoutProps {
   paystack_public_key: string;
+  flash?: any;
 }
 
-export default function Checkout({ paystack_public_key }: CheckoutProps) {
+export default function Checkout({ paystack_public_key, flash }: CheckoutProps) {
   const { items: cartItems = [], getTotalPrice, clearCart } = useCart();
   const cartTotal = getTotalPrice ? getTotalPrice() : 0;
   const [isProcessing, setIsProcessing] = useState(false);
+  const page = usePage();
+
+  console.log('Checkout initialized with public key:', paystack_public_key);
+  console.log('Cart total:', cartTotal);
+  console.log('Flash data from props:', flash);
+  console.log('Page flash data:', page.props.flash);
 
   const { data, setData, post, processing, errors } = useForm({
     customer_name: '',
@@ -23,6 +30,128 @@ export default function Checkout({ paystack_public_key }: CheckoutProps) {
     shipping_postal_code: '',
     items: [],
   });
+
+  const [paystackLoaded, setPaystackLoaded] = useState(false);
+
+  // Check for flash data on component mount (in case of redirect)
+  useEffect(() => {
+    const currentFlash = flash || page.props.flash;
+    console.log('Checking flash data on mount:', currentFlash);
+    
+    if (currentFlash && currentFlash.authorization_url) {
+      console.log('Found authorization URL in flash data, redirecting to payment...');
+      console.log('Authorization URL:', currentFlash.authorization_url);
+      
+      // Redirect to Paystack payment page
+      window.location.href = currentFlash.authorization_url;
+    }
+  }, [flash, page.props.flash]);
+
+  // Load Paystack script
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://js.paystack.co/v1/inline.js';
+    script.async = true;
+    
+    script.onload = () => {
+      console.log('Paystack script loaded successfully');
+      setPaystackLoaded(true);
+    };
+    
+    script.onerror = () => {
+      console.error('Failed to load Paystack script');
+    };
+    
+    document.body.appendChild(script);
+
+    return () => {
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
+    };
+  }, []);
+
+  const initializePaystackPayment = (reference: string, amount: number) => {
+    console.log('Initializing Paystack payment:', { reference, amount, email: data.customer_email });
+    
+    // Check if Paystack is loaded
+    // @ts-ignore
+    if (!window.PaystackPop) {
+      console.error('PaystackPop not available. Script may not have loaded.');
+      alert('Payment system is loading. Please try again in a moment.');
+      setIsProcessing(false);
+      return;
+    }
+
+    try {
+      // Check if popups are allowed
+      let popupTest = null;
+      try {
+        popupTest = window.open('', '_blank', 'width=1,height=1');
+        if (popupTest) {
+          popupTest.close();
+        }
+      } catch (e) {
+        console.warn('Popups appear to be blocked');
+      }
+
+      // @ts-ignore
+      const handler = window.PaystackPop.setup({
+        key: paystack_public_key,
+        email: data.customer_email,
+        amount: amount * 100, // Convert to kobo
+        currency: 'GHS',
+        ref: reference,
+        channels: ['card', 'bank', 'ussd', 'mobile_money'],
+        callback: function(response: any) {
+          console.log('Payment successful:', response);
+          // Verify payment on backend
+          window.location.href = `/payment/callback?reference=${response.reference}`;
+        },
+        onClose: function() {
+          console.log('Payment popup closed by user');
+          setIsProcessing(false);
+        }
+      });
+      
+      console.log('Opening Paystack iframe...');
+      handler.openIframe();
+    } catch (error) {
+      console.error('Error initializing Paystack payment:', error);
+      alert('Failed to initialize payment. Please try again.');
+      setIsProcessing(false);
+    }
+  };
+
+  // Debug function to check Paystack status
+  const checkPaystackStatus = () => {
+    console.log('=== PAYSTACK DEBUG INFO ===');
+    // @ts-ignore
+    console.log('PaystackPop available:', !!window.PaystackPop);
+    console.log('Paystack script loaded:', paystackLoaded);
+    console.log('Public key:', paystack_public_key);
+    console.log('Customer email:', data.customer_email);
+    console.log('Cart total:', cartTotal);
+    // @ts-ignore
+    if (window.PaystackPop) {
+      console.log('PaystackPop object methods:', Object.keys(window.PaystackPop));
+    }
+    
+    // Test popup capability
+    try {
+      const testPopup = window.open('', '_blank', 'width=1,height=1');
+      if (testPopup) {
+        testPopup.close();
+        console.log('Popups are allowed');
+      } else {
+        console.log('Popups are blocked - will open in new tab');
+      }
+    } catch (e) {
+      console.log('Popups are blocked - will open in new tab');
+    }
+    
+    console.log('========================');
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,20 +179,44 @@ export default function Checkout({ paystack_public_key }: CheckoutProps) {
     console.log('Mapped items:', items);
     console.log('Full payload being sent:', payload);
 
-    // Use router.post directly with explicit data
+    // Create order and get payment reference
     router.post('/checkout', payload, {
       preserveScroll: true,
       onSuccess: (page: any) => {
-        // Check if we got a payment URL in the flash data
-        const paymentUrl = page.props?.flash?.payment_url;
-        console.log('Payment initialized successfully', paymentUrl);
+        console.log('=== CHECKOUT SUCCESS RESPONSE ===');
+        console.log('Full page object:', page);
+        console.log('Page props:', page.props);
         
-        if (paymentUrl) {
-          // Redirect to Paystack payment page
-          window.location.href = paymentUrl;
+        // Check if we got payment data
+        const flash = page.props?.flash;
+        console.log('Flash data:', flash);
+        
+        if (flash?.payment_reference) {
+          console.log('Payment reference found:', flash.payment_reference);
+          console.log('Payment amount:', flash.payment_amount);
+          
+          // Wait for Paystack to be loaded and a bit more time for safety
+          const attemptPayment = () => {
+            console.log('Attempting payment initialization...');
+            console.log('PaystackPop available:', !!window.PaystackPop);
+            console.log('Paystack loaded state:', paystackLoaded);
+            
+            // @ts-ignore
+            if (window.PaystackPop && paystackLoaded) {
+              console.log('Initializing Paystack payment...');
+              initializePaystackPayment(flash.payment_reference, flash.payment_amount || cartTotal);
+            } else {
+              console.log('Paystack not ready yet, retrying...');
+              setTimeout(attemptPayment, 1000);
+            }
+          };
+          
+          // Start attempt after a short delay
+          setTimeout(attemptPayment, 500);
         } else {
+          console.error('No payment reference received in flash data');
+          console.log('Available flash keys:', Object.keys(flash || {}));
           setIsProcessing(false);
-          console.error('No payment URL received');
         }
       },
       onError: (errors) => {
@@ -211,6 +364,23 @@ export default function Checkout({ paystack_public_key }: CheckoutProps) {
                   className="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {processing || isProcessing ? 'Processing...' : `Pay GH₵${cartTotal.toFixed(2)}`}
+                </button>
+                
+                {/* Debug button - remove this later */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    checkPaystackStatus();
+                    if (data.customer_email && cartTotal > 0) {
+                      console.log('Debug: Main payment button now redirects to Paystack authorization URL');
+                      alert('Debug: The main payment button now redirects to Paystack payment page automatically.');
+                    } else {
+                      alert('Please fill email and ensure cart has items');
+                    }
+                  }}
+                  className="w-full py-2 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm mt-2"
+                >
+                  Test Paystack (Debug)
                 </button>
               </form>
             </div>

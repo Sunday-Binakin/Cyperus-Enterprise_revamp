@@ -16,7 +16,6 @@ export default function Header() {
   const [isAnyDropdownHovered, setIsAnyDropdownHovered] = useState(false);
   const [showCartPopover, setShowCartPopover] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const cartRef = useRef<HTMLDivElement>(null);
   const { getTotalItems } = useCart();
 
   // Close menu when clicking outside
@@ -99,14 +98,20 @@ export default function Header() {
 
           {/* Cart, Subscribe, and Menu */}
           <div className="flex flex-row gap-1 md:gap-1 lg:gap-3 xl:gap-4 items-center flex-shrink-0">
-            <div
-              className="hidden md:block relative"
-              ref={cartRef}
-              onMouseEnter={() => getTotalItems() > 0 && setShowCartPopover(true)}
-              onMouseLeave={() => setShowCartPopover(false)}
-            >
-              <CartIndicator itemCount={getTotalItems()} />
-              {showCartPopover && getTotalItems() > 0 && <CartPopover />}
+            <div className="hidden md:block relative">
+              <div
+                onClick={() => getTotalItems() > 0 && setShowCartPopover(!showCartPopover)}
+                className="cursor-pointer"
+              >
+                <CartIndicator itemCount={getTotalItems()} />
+              </div>
+              {showCartPopover && getTotalItems() > 0 && (
+                <div className="fixed inset-0 z-40" onClick={() => setShowCartPopover(false)}>
+                  <div className="absolute top-[68px] right-2 sm:right-4 w-80 max-w-[calc(100vw-1rem)]" onClick={(e) => e.stopPropagation()}>
+                    <CartPopover onClose={() => setShowCartPopover(false)} />
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Subscribe button - hidden on mobile and small screens */}
@@ -127,8 +132,8 @@ export default function Header() {
                 <CartIndicator itemCount={getTotalItems()} />
                 {showCartPopover && getTotalItems() > 0 && (
                   <div className="fixed inset-0 z-40 bg-black bg-opacity-50" onClick={() => setShowCartPopover(false)}>
-                    <div className="absolute top-20 right-4 w-80" onClick={(e) => e.stopPropagation()}>
-                      <CartPopover />
+                    <div className="absolute top-20 right-2 left-2 sm:right-4 sm:left-auto w-auto sm:w-80 max-w-[calc(100vw-1rem)]" onClick={(e) => e.stopPropagation()}>
+                      <CartPopover onClose={() => setShowCartPopover(false)} />
                     </div>
                   </div>
                 )}
