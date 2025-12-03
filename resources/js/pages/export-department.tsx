@@ -65,18 +65,36 @@ export default function ExportDepartment() {
       <Head title="Export Department - Cyperus Enterprise" />
       <Header />
       
-      <div className="relative">
-        {/* Hero Section */}
-        <HeroSection 
-          title="🌍 Export Department"
-          breadcrumbItems={[
-            { label: 'Home', href: '/' },
-            { label: 'Export Department' }
-          ]}
-          backgroundImage="/images/clients/hero/slider1.JPG"
-        />
+      {/* Temporary: Direct background test */}
+      <div 
+        className="relative min-h-[70vh] flex items-center"
+        style={{
+          backgroundImage: 'url(/images/clients/hero/slider1.JPG)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
+        {/* Light black overlay */}
+        <div className="absolute inset-0 bg-black/30"></div>
         
-        {/* Scrollable Content */}
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-4xl mx-auto text-left">
+            <nav className="mb-4">
+              <ol className="flex items-center space-x-2 text-sm text-gray-200">
+                <li><a href="/" className="hover:text-white text-gray-300">Home</a></li>
+                <li><span className="mx-2">›</span></li>
+                <li className="text-white font-medium">Export Department</li>
+              </ol>
+            </nav>
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
+              Export Department
+            </h1>
+          </div>
+        </div>
+      </div>
+      
+      {/* Scrollable Content */}
         <div className="bg-black">
           <div className="container mx-auto px-4">
             <div className="max-w-6xl mx-auto">
@@ -437,7 +455,6 @@ export default function ExportDepartment() {
             </div>
           </div>
         </div>
-      </div>
       
       <Footer />
       <FloatingWhatsApp />

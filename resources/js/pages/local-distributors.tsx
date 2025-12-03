@@ -10,14 +10,34 @@ export default function LocalDistributors() {
       <Head title="Local Distributors - Cyperus Enterprise" />
       <Header />
       
-      <HeroSection
-        title="Local Distributors" 
-        breadcrumbItems={[
-          { label: 'Home', href: '/' },
-          { label: 'Local Distributors', href: '/local-distributors' }
-        ]} 
-        backgroundImage="/images/clients/products/footer/choconut.jpg" 
-      />
+      {/* Hero Section - Direct CSS approach like export department */}
+      <div 
+        className="relative min-h-[70vh] flex items-center"
+        style={{
+          backgroundImage: 'url(/images/clients/hero/slider1.JPG)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
+        {/* Light black overlay */}
+        <div className="absolute inset-0 bg-black/30"></div>
+        
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-4xl mx-auto text-left">
+            <nav className="mb-4">
+              <ol className="flex items-center space-x-2 text-sm text-gray-200">
+                <li><a href="/" className="hover:text-white text-gray-300">Home</a></li>
+                <li><span className="mx-2">›</span></li>
+                <li className="text-white font-medium">Local Distributors</li>
+              </ol>
+            </nav>
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
+              Local Distributors
+            </h1>
+          </div>
+        </div>
+      </div>
 
       <div className="bg-black min-h-screen text-white">
         <div className="max-w-4xl mx-auto px-4 py-16 sm:px-6 lg:px-8">

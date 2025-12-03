@@ -39,7 +39,7 @@ interface Props {
   };
 }
 
-export default function MessagesIndex({ messages = { data: [], current_page: 1, last_page: 1, per_page: 20, total: 0 }, stats = { total: 0, unread: 0, contact: 0, distributor: 0, export: 0 }, filters = {} }: Props) {
+export default function MessagesIndex({ messages, stats, filters }: Props) {
   
   const [search, setSearch] = useState(filters?.search || '');
   const [typeFilter, setTypeFilter] = useState(filters?.type || '');
@@ -47,11 +47,46 @@ export default function MessagesIndex({ messages = { data: [], current_page: 1, 
 
   const handleFilter = () => {
     router.get('/admin/messages', {
-      search,
-      type: typeFilter,
-      status: statusFilter,
+      search: search || undefined,
+      type: typeFilter || undefined,
+      status: statusFilter || undefined,
     }, {
-      preserveState: true,
+      preserveState: false,
+      preserveScroll: true,
+    });
+  };
+
+  const clearFilters = () => {
+    setSearch('');
+    setTypeFilter('');
+    setStatusFilter('');
+    router.get('/admin/messages', {}, {
+      preserveState: false,
+      preserveScroll: true,
+    });
+  };
+
+  // Auto-apply filters when dropdowns change
+  const handleTypeChange = (value: string) => {
+    setTypeFilter(value);
+    router.get('/admin/messages', {
+      search: search || undefined,
+      type: value || undefined,
+      status: statusFilter || undefined,
+    }, {
+      preserveState: false,
+      preserveScroll: true,
+    });
+  };
+
+  const handleStatusChange = (value: string) => {
+    setStatusFilter(value);
+    router.get('/admin/messages', {
+      search: search || undefined,
+      type: typeFilter || undefined,
+      status: value || undefined,
+    }, {
+      preserveState: false,
       preserveScroll: true,
     });
   };
@@ -114,51 +149,71 @@ export default function MessagesIndex({ messages = { data: [], current_page: 1, 
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-4">
+          <div 
+            className="bg-gray-900 border border-gray-800 rounded-lg p-4 cursor-pointer hover:border-gray-600 transition-colors"
+            onClick={clearFilters}
+            title="Click to show all messages"
+          >
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Total Messages</p>
-                <p className="text-2xl font-bold text-white">{stats.total}</p>
+                <p className="text-2xl font-bold text-white">{stats?.total || 0}</p>
               </div>
               <Mail className="w-8 h-8 text-gray-600" />
             </div>
           </div>
 
-          <div className="bg-gray-900 border border-blue-500/20 rounded-lg p-4">
+          <div 
+            className="bg-gray-900 border border-blue-500/20 rounded-lg p-4 cursor-pointer hover:border-blue-400 transition-colors"
+            onClick={() => handleStatusChange('unread')}
+            title="Click to filter unread messages"
+          >
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Unread</p>
-                <p className="text-2xl font-bold text-blue-400">{stats.unread}</p>
+                <p className="text-2xl font-bold text-blue-400">{stats?.unread || 0}</p>
               </div>
               <Mail className="w-8 h-8 text-blue-500/50" />
             </div>
           </div>
 
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-4">
+          <div 
+            className="bg-gray-900 border border-gray-800 rounded-lg p-4 cursor-pointer hover:border-purple-400 transition-colors"
+            onClick={() => handleTypeChange('contact')}
+            title="Click to filter contact messages"
+          >
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Contact Us</p>
-                <p className="text-2xl font-bold text-white">{stats.contact}</p>
+                <p className="text-2xl font-bold text-white">{stats?.contact || 0}</p>
               </div>
               <Mail className="w-8 h-8 text-purple-500/50" />
             </div>
           </div>
 
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-4">
+          <div 
+            className="bg-gray-900 border border-gray-800 rounded-lg p-4 cursor-pointer hover:border-indigo-400 transition-colors"
+            onClick={() => handleTypeChange('distributor')}
+            title="Click to filter distributor messages"
+          >
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Distributors</p>
-                <p className="text-2xl font-bold text-white">{stats.distributor}</p>
+                <p className="text-2xl font-bold text-white">{stats?.distributor || 0}</p>
               </div>
               <Mail className="w-8 h-8 text-indigo-500/50" />
             </div>
           </div>
 
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-4">
+          <div 
+            className="bg-gray-900 border border-gray-800 rounded-lg p-4 cursor-pointer hover:border-pink-400 transition-colors"
+            onClick={() => handleTypeChange('export')}
+            title="Click to filter export department messages"
+          >
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-sm">Export Dept</p>
-                <p className="text-2xl font-bold text-white">{stats.export}</p>
+                <p className="text-2xl font-bold text-white">{stats?.export || 0}</p>
               </div>
               <Mail className="w-8 h-8 text-pink-500/50" />
             </div>
@@ -167,7 +222,7 @@ export default function MessagesIndex({ messages = { data: [], current_page: 1, 
 
         {/* Filters */}
         <div className="bg-gray-900 border border-gray-800 rounded-lg p-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
               <input
@@ -176,14 +231,14 @@ export default function MessagesIndex({ messages = { data: [], current_page: 1, 
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleFilter()}
-                className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+                className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
               />
             </div>
 
             <select
               value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value)}
-              className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+              onChange={(e) => handleTypeChange(e.target.value)}
+              className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
             >
               <option value="">All Types</option>
               <option value="contact">Contact Us</option>
@@ -193,8 +248,8 @@ export default function MessagesIndex({ messages = { data: [], current_page: 1, 
 
             <select
               value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+              onChange={(e) => handleStatusChange(e.target.value)}
+              className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
             >
               <option value="">All Status</option>
               <option value="unread">Unread</option>
@@ -205,16 +260,115 @@ export default function MessagesIndex({ messages = { data: [], current_page: 1, 
 
             <button
               onClick={handleFilter}
-              className="flex items-center justify-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition"
+              className="flex items-center justify-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-colors"
+            >
+              <Search className="w-4 h-4" />
+              Search
+            </button>
+
+            <button
+              onClick={clearFilters}
+              className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
             >
               <Filter className="w-4 h-4" />
-              Apply Filters
+              Clear Filters
             </button>
           </div>
+          
+          {/* Active Filters Display */}
+          {(search || typeFilter || statusFilter) && (
+            <div className="mt-3 pt-3 border-t border-gray-700">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-sm text-gray-400">Active filters:</span>
+                
+                {search && (
+                  <span className="inline-flex items-center gap-1 px-2 py-1 bg-amber-600/20 text-amber-300 rounded text-xs">
+                    Search: "{search}"
+                    <button 
+                      onClick={() => {
+                        setSearch('');
+                        router.get('/admin/messages', {
+                          type: typeFilter || undefined,
+                          status: statusFilter || undefined,
+                        }, {
+                          preserveState: false,
+                          preserveScroll: true,
+                        });
+                      }}
+                      className="hover:text-amber-100 ml-1"
+                    >
+                      ×
+                    </button>
+                  </span>
+                )}
+                
+                {typeFilter && (
+                  <span className="inline-flex items-center gap-1 px-2 py-1 bg-blue-600/20 text-blue-300 rounded text-xs">
+                    Type: {typeFilter === 'contact' ? 'Contact Us' : typeFilter === 'distributor' ? 'Distributor' : 'Export Dept'}
+                    <button 
+                      onClick={() => {
+                        setTypeFilter('');
+                        router.get('/admin/messages', {
+                          search: search || undefined,
+                          status: statusFilter || undefined,
+                        }, {
+                          preserveState: false,
+                          preserveScroll: true,
+                        });
+                      }}
+                      className="hover:text-blue-100 ml-1"
+                    >
+                      ×
+                    </button>
+                  </span>
+                )}
+                
+                {statusFilter && (
+                  <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-600/20 text-green-300 rounded text-xs">
+                    Status: {statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)}
+                    <button 
+                      onClick={() => {
+                        setStatusFilter('');
+                        router.get('/admin/messages', {
+                          search: search || undefined,
+                          type: typeFilter || undefined,
+                        }, {
+                          preserveState: false,
+                          preserveScroll: true,
+                        });
+                      }}
+                      className="hover:text-green-100 ml-1"
+                    >
+                      ×
+                    </button>
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Messages Table */}
         <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
+          {/* Results Header */}
+          <div className="px-6 py-3 bg-gray-800/50 border-b border-gray-700">
+            <div className="flex justify-between items-center">
+              <div className="text-sm text-gray-400">
+                Showing {messages?.data?.length || 0} of {messages?.total || 0} messages
+                {(search || typeFilter || statusFilter) && (
+                  <span className="ml-2 text-amber-400">
+                    (filtered)
+                  </span>
+                )}
+              </div>
+              {(messages?.total || 0) > (messages?.per_page || 0) && (
+                <div className="text-sm text-gray-400">
+                  Page {messages?.current_page || 1} of {messages?.last_page || 1}
+                </div>
+              )}
+            </div>
+          </div>
+          
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-800 border-b border-gray-700">
@@ -240,14 +394,35 @@ export default function MessagesIndex({ messages = { data: [], current_page: 1, 
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-800">
-                {messages.data.length === 0 ? (
+                {(messages?.data?.length || 0) === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
-                      No messages found
+                    <td colSpan={6} className="px-6 py-12 text-center">
+                      <div className="flex flex-col items-center justify-center space-y-4">
+                        <Mail className="w-16 h-16 text-gray-600" />
+                        <div>
+                          <h3 className="text-lg font-medium text-gray-300">
+                            {(search || typeFilter || statusFilter) ? 'No messages match your filters' : 'No messages found'}
+                          </h3>
+                          <p className="text-gray-500 mt-1">
+                            {(search || typeFilter || statusFilter) 
+                              ? 'Try adjusting your search criteria or clear the filters.' 
+                              : 'Messages from customers will appear here when they contact you.'
+                            }
+                          </p>
+                          {(search || typeFilter || statusFilter) && (
+                            <button 
+                              onClick={clearFilters}
+                              className="mt-3 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm transition-colors"
+                            >
+                              Clear All Filters
+                            </button>
+                          )}
+                        </div>
+                      </div>
                     </td>
                   </tr>
                 ) : (
-                  messages.data.map((message) => (
+                  messages?.data?.map((message) => (
                     <tr
                       key={message.id}
                       className={`hover:bg-gray-800/50 transition ${message.status === 'unread' ? 'bg-blue-500/5' : ''}`}
@@ -306,24 +481,24 @@ export default function MessagesIndex({ messages = { data: [], current_page: 1, 
           </div>
 
           {/* Pagination */}
-          {messages.last_page > 1 && (
+          {(messages?.last_page || 0) > 1 && (
             <div className="px-6 py-4 border-t border-gray-800 flex items-center justify-between">
               <div className="text-sm text-gray-400">
-                Showing {messages.data.length > 0 ? ((messages.current_page - 1) * messages.per_page + 1) : 0} to{' '}
-                {Math.min(messages.current_page * messages.per_page, messages.total)} of {messages.total} messages
+                Showing {(messages?.data?.length || 0) > 0 ? (((messages?.current_page || 1) - 1) * (messages?.per_page || 0) + 1) : 0} to{' '}
+                {Math.min((messages?.current_page || 1) * (messages?.per_page || 0), messages?.total || 0)} of {messages?.total || 0} messages
               </div>
               <div className="flex gap-2">
-                {messages.current_page > 1 && (
+                {(messages?.current_page || 1) > 1 && (
                   <Link
-                    href={`/admin/messages?page=${messages.current_page - 1}&search=${search}&type=${typeFilter}&status=${statusFilter}`}
+                    href={`/admin/messages?page=${(messages?.current_page || 1) - 1}&search=${search}&type=${typeFilter}&status=${statusFilter}`}
                     className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition"
                   >
                     Previous
                   </Link>
                 )}
-                {messages.current_page < messages.last_page && (
+                {(messages?.current_page || 1) < (messages?.last_page || 1) && (
                   <Link
-                    href={`/admin/messages?page=${messages.current_page + 1}&search=${search}&type=${typeFilter}&status=${statusFilter}`}
+                    href={`/admin/messages?page=${(messages?.current_page || 1) + 1}&search=${search}&type=${typeFilter}&status=${statusFilter}`}
                     className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition"
                   >
                     Next

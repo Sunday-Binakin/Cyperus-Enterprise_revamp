@@ -105,6 +105,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin', 'log.activi
     Route::get('messages', [AdminMessageController::class, 'index'])->name('messages.index');
     Route::get('messages/{message}', [AdminMessageController::class, 'show'])->name('messages.show');
     Route::post('messages/{message}/status', [AdminMessageController::class, 'updateStatus'])->name('messages.update-status');
+    Route::post('messages/{message}/mark-read', [AdminMessageController::class, 'markAsRead'])->name('messages.mark-read');
     Route::delete('messages/{message}', [AdminMessageController::class, 'destroy'])->name('messages.destroy');
 
     // Blog Management
@@ -126,6 +127,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin', 'log.activi
 
     Route::post('notifications/{notification}/read', function (\App\Models\Notification $notification) {
         $notification->markAsRead();
+        
+        // If the notification has a link, redirect to it
+        if ($notification->link) {
+            return redirect($notification->link);
+        }
+        
         return back();
     })->name('notifications.read');
 
@@ -135,16 +142,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin', 'log.activi
         return inertia('Admin/ActivityLogs', ['logs' => $logs]);
     })->name('activity-logs.index');
 
-    // Messages (Form Submissions)
-    Route::get('messages', function () {
-        $submissions = \App\Models\FormSubmission::latest()->paginate(20);
-        return inertia('admin/messages', ['submissions' => $submissions]);
-    })->name('messages.index');
-
-    Route::post('messages/{submission}/mark-read', function (\App\Models\FormSubmission $submission) {
-        $submission->markAsRead();
-        return back();
-    })->name('messages.mark-read');
+    // Messages 
+    Route::get('messages', [AdminMessageController::class, 'index'])->name('messages.index');
+    Route::get('messages/{message}', [AdminMessageController::class, 'show'])->name('messages.show');
+    Route::post('messages/{message}/mark-read', [AdminMessageController::class, 'markAsRead'])->name('messages.mark-read');
+    Route::delete('messages/{message}', [AdminMessageController::class, 'destroy'])->name('messages.destroy');
 });
 
 // Settings routes (if exists)

@@ -176,10 +176,6 @@ export default function Recipes() {
             <h1 className="text-5xl md:text-6xl font-bold mb-6">
               Tigernut Recipes
             </h1>
-            <p className="text-xl md:text-2xl text-amber-100 max-w-3xl mx-auto">
-              Discover delicious ways to enjoy the wholesome goodness of tigernuts. 
-              From drinks to desserts, these recipes are healthy, tasty, and easy to make!
-            </p>
           </div>
         </section>
 

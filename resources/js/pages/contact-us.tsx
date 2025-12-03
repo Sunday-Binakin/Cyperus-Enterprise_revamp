@@ -52,11 +52,21 @@ export default function ContactUs() {
       <Header />
       <main className="bg-black">
         {/* Hero Section */}
-        <section className="relative h-[50vh] bg-cover bg-center" style={{ backgroundImage: "url('/images/clients/hero/slider1.JPG')" }}>
+        <section className="relative h-[60vh] bg-cover bg-center" style={{ backgroundImage: "url('/images/clients/hero/slider1.JPG')" }}>
           <div className="absolute inset-0 bg-black/60" />
-          <div className="relative h-full flex flex-col items-center justify-center text-white px-4">
-            <h1 className="text-5xl md:text-7xl font-bold mb-4">Contact Us</h1>
-            <p className="text-xl">We'd love to hear from you</p>
+          <div className="relative h-full flex flex-col justify-center text-white px-4">
+            <div className="container mx-auto">
+              <div className="max-w-4xl mx-auto text-left">
+                <nav className="mb-4">
+                  <ol className="flex items-center space-x-2 text-sm text-gray-200">
+                    <li><a href="/" className="hover:text-white text-gray-300">Home</a></li>
+                    <li><span className="mx-2">›</span></li>
+                    <li className="text-white font-medium">Contact Us</li>
+                  </ol>
+                </nav>
+                <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">Contact Us</h1>
+              </div>
+            </div>
           </div>
         </section>
 

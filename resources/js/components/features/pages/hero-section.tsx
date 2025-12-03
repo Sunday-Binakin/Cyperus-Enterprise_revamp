@@ -79,28 +79,20 @@ export function HeroSection({
       ref={heroRef}
       className={`relative ${heightClasses[height]} flex items-center overflow-hidden ${className}`}
     >
-      {/* Background Image with Parallax Effect */}
-      <div className="absolute inset-0 -z-10 overflow-hidden">
+      {/* Background Image - Simplified without parallax */}
+      <div 
+        className="absolute inset-0 -z-10"
+        style={{
+          backgroundImage: `url("${backgroundImage}")`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+        }}
+      >
         <div 
-          ref={bgRef}
-          className="absolute inset-0 will-change-transform"
-          style={{
-            backgroundImage: `url(${backgroundImage})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            transform: 'translate3d(0, 0, 0)',
-            transition: 'transform 0.1s ease-out',
-            willChange: 'transform',
-            height: '110%', // Slightly larger to prevent showing edges during scroll
-            width: '100%',
-          }}
-        >
-          <div 
-            className="absolute inset-0 bg-black" 
-            style={{ opacity: `${overlayOpacity}%` }}
-          />
-        </div>
+          className="absolute inset-0 bg-black" 
+          style={{ opacity: overlayOpacity / 100 }}
+        />
       </div>
 
       {/* Content */}

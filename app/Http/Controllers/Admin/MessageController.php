@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Message;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class MessageController extends Controller
@@ -14,6 +16,7 @@ class MessageController extends Controller
      */
     public function index(Request $request)
     {
+        // Build query
         $query = Message::query();
 
         // Filter by type
@@ -61,11 +64,39 @@ class MessageController extends Controller
     {
         // Mark as read if unread
         if ($message->status === 'unread') {
-            $message->markAsRead(auth()->id());
+            $message->markAsRead(Auth::id());
         }
 
-        // For now, redirect to messages list until we create the show page
-        return redirect()->route('admin.messages.index');
+        // Load the reader relationship
+        $message->load('reader');
+
+        return Inertia::render('admin/show-message', [
+            'message' => $message,
+        ]);
+    }
+
+    /**
+     * Mark message as read and reduce notification count
+     */
+    public function markAsRead(Message $message)
+    {
+        // Mark message as read if unread
+        if ($message->status === 'unread') {
+            $message->markAsRead(Auth::id());
+        }
+
+        // Mark related notifications as read
+        $notifications = \App\Models\Notification::where('type', 'message')
+            ->where('data->message_id', $message->id)
+            ->where('is_read', false)
+            ->get();
+
+        foreach ($notifications as $notification) {
+            $notification->markAsRead();
+        }
+
+        return redirect()->route('admin.messages.index')
+            ->with('success', 'Message marked as read successfully!');
     }
 
     /**
@@ -80,7 +111,7 @@ class MessageController extends Controller
         $message->update([
             'status' => $validated['status'],
             'read_at' => $validated['status'] === 'read' ? now() : $message->read_at,
-            'read_by' => $validated['status'] === 'read' ? auth()->id() : $message->read_by,
+            'read_by' => $validated['status'] === 'read' ? Auth::id() : $message->read_by,
         ]);
 
         return back()->with('success', 'Message status updated successfully!');

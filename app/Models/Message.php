@@ -13,8 +13,11 @@ class Message extends Model
         'email',
         'phone',
         'company',
+        'country',
+        'business_type',
         'subject',
         'message',
+        'additional_data',
         'status',
         'read_at',
         'read_by',
@@ -22,6 +25,7 @@ class Message extends Model
 
     protected $casts = [
         'read_at' => 'datetime',
+        'additional_data' => 'array',
     ];
 
     /**

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class Testimonial extends Model
 {
@@ -59,6 +60,6 @@ class Testimonial extends Model
      */
     public function getImageUrlAttribute(): ?string
     {
-        return $this->image ? asset($this->image) : null;
+        return $this->image ? Storage::url($this->image) : null;
     }
 }
