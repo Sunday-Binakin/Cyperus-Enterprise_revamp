@@ -23,9 +23,10 @@ export const CONTACT_INFO = [
 ];
 
 export const SUPPORT_TEAM = [
-  { name: 'Esther Johnson', phone: '+233 24 000 0000', showIcon: true },
-  { name: 'Esther Johnson', phone: '+233 24 000 0000', showIcon: false },
-  { name: 'Esther Johnson', phone: '+233 24 000 0000', showIcon: false },
+  { name: 'Esther Johnson', phone: '+233 24 000 0000', showIcon: true }
+  // ,
+  // { name: 'Esther Johnson', phone: '+233 24 000 0000', showIcon: false },
+  // { name: 'Esther Johnson', phone: '+233 24 000 0000', showIcon: false },
 ];
 
 export const INSTAGRAM_IMAGES = [

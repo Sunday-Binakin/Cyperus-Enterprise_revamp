@@ -20,7 +20,7 @@ function InstagramImage({ src, alt }: InstagramImageProps) {
 
 export default function InstagramFeed() {
   return (
-    <div className="w-full md:w-[25%]">
+    <div className="w-full md:w-[100%]">
       {/* Desktop title */}
       <p className='hidden md:block font-semibold text-white text-xl sm:text-2xl mt-4 mb-4'>Follow Us On Instagram</p>
       
@@ -43,7 +43,7 @@ export default function InstagramFeed() {
               <img
                 src={src}
                 alt="Instagram"
-                className="transition-transform duration-300 ease-out-in hover:scale-110 cursor-pointer w-[70px] h-[70px] sm:w-[100px] sm:h-[100px] object-cover rounded"
+                className="transition-transform duration-300 ease-out-in hover:scale-110 cursor-pointer w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] object-cover rounded"
               />
             </div>
           ))}
@@ -54,7 +54,7 @@ export default function InstagramFeed() {
               <img
                 src={src}
                 alt="Instagram"
-                className="transition-transform duration-300 ease-out-in hover:scale-110 cursor-pointer w-[70px] h-[70px] sm:w-[100px] sm:h-[100px] object-cover rounded"
+                className="transition-transform duration-300 ease-out-in hover:scale-110 cursor-pointer w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] object-cover rounded"
               />
             </div>
           ))}

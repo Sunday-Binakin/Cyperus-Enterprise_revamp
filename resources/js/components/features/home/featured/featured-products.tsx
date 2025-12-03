@@ -20,12 +20,8 @@ export default function FeaturedProducts({ products }: FeaturedProductsProps) {
   // Only use real products from backend - no fallback constants
   const displayProducts = products || [];
 
-  console.log('Featured Products Component - Products received:', products);
-  console.log('Display products count:', displayProducts.length);
-
   // Don't render anything if no products are available from the database
   if (displayProducts.length === 0) {
-    console.log('No products found, returning null');
     return null;
   }
 

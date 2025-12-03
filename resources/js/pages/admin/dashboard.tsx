@@ -12,10 +12,6 @@ interface DashboardProps {
 }
 
 export default function Dashboard({ stats }: DashboardProps) {
-  console.log('Admin Dashboard props:', { stats });
-  console.log('Stats object:', stats);
-  console.log('Stats type:', typeof stats);
-  
   // Check if stats is undefined or null
   if (!stats) {
     console.error('Stats prop is undefined or null');

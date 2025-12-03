@@ -27,8 +27,7 @@ export function usePayment(): UsePaymentReturn {
     try {
       // TODO: Implement actual Paystack payment initialization
       // This will use the paystack-js library
-      console.log('Initializing payment with config:', config);
-      
+
       // Placeholder for payment initialization
       await new Promise(resolve => setTimeout(resolve, 1000));
       

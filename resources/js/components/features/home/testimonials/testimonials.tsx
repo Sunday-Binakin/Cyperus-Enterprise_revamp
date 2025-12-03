@@ -13,44 +13,15 @@ interface TestimonialsProps {
   testimonials: Testimonial[];
 }
 
-// Default testimonials for fallback (in case database is empty)
-const defaultTestimonials: Testimonial[] = [
-  {
-    id: 1,
-    name: "Akosua Mensah",
-    title: "Health Enthusiast",
-    company: "Accra, Ghana",
-    content: "Switching to tigernut milk has completely transformed my morning routine. My digestion improved and I feel more energetic throughout the day. It's creamy, delicious, and my kids love it too!",
-    image: "/images/clients/testimonial/akosua.jpg"
-  },
-  {
-    id: 2,
-    name: "Chef Kwame Asante", 
-    title: "Executive Chef",
-    company: "Five Star Hotel",
-    content: "Tigernut flour has become my secret ingredient. The nutty flavor and texture it brings to our pastries is absolutely incredible. Our guests constantly ask about our secret ingredient!",
-    image: "/images/clients/testimonial/kwame.jpg"
-  },
-  {
-    id: 3,
-    name: "Sarah Osei",
-    title: "Fitness Trainer",
-    company: "Kumasi, Ghana", 
-    content: "My clients love the tigernut protein bars I recommend. It's natural, nutritious, and keeps them satisfied during workouts. Perfect for anyone on a health journey!",
-    image: "/images/clients/testimonial/gym.jpg"
-  }
-];
+// Testimonials loaded from database only
 
 const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => (
   <div className="bg-gray-900 text-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
     <div className="relative h-96">
       <img 
-        src={testimonial.image || "/images/clients/testimonial/default.jpg"}
+        src={testimonial.image}
         alt={testimonial.name}
         className="absolute inset-0 w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity duration-300"
-        onError={(e) => {
-          (e.target as HTMLImageElement).src = "/images/clients/testimonial/default.jpg";
-        }}
       />
       <div className="absolute inset-0 flex flex-col justify-end p-6 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
         <span 
@@ -72,8 +43,10 @@ const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => (
 );
 
 export default function Testimonials({ testimonials = [] }: TestimonialsProps) {
-  // Use database testimonials if available, otherwise fall back to defaults
-  const displayTestimonials = testimonials.length > 0 ? testimonials : defaultTestimonials;
+  // Only show testimonials if they exist in the database
+  if (testimonials.length === 0) {
+    return null; // Hide the section if no testimonials
+  }
 
   return (
     <section className="py-16 px-4 bg-black">
@@ -86,7 +59,7 @@ export default function Testimonials({ testimonials = [] }: TestimonialsProps) {
         
         {/* Grid View */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-          {displayTestimonials.map((testimonial) => (
+          {testimonials.map((testimonial) => (
             <TestimonialCard 
               key={testimonial.id} 
               testimonial={testimonial}

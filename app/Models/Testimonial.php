@@ -60,6 +60,17 @@ class Testimonial extends Model
      */
     public function getImageUrlAttribute(): ?string
     {
-        return $this->image ? Storage::url($this->image) : null;
+        if (!$this->image) {
+            return null;
+        }
+
+        // Handle old storage path format
+        if (str_contains($this->image, 'uploads/testimonials/')) {
+            $filename = basename($this->image);
+            return asset('storage/uploads/testimonials/' . $filename);
+        }
+
+        // Handle new format (just filename)
+        return asset('storage/uploads/testimonials/' . $this->image);
     }
 }

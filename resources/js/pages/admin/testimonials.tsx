@@ -1,4 +1,6 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 import AdminLayout from '@/layouts/admin-layout';
 
 interface Testimonial {
@@ -20,6 +22,23 @@ interface Props {
 }
 
 export default function Testimonials({ testimonials }: Props) {
+  const handleDelete = (testimonialId: number) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You won\'t be able to revert this!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc2626',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        router.delete(`/admin/testimonials/${testimonialId}`);
+      }
+    });
+  };
+
   return (
     <AdminLayout>
       <Head title="Testimonials" />
@@ -116,6 +135,7 @@ export default function Testimonials({ testimonials }: Props) {
                         Edit
                       </Link>
                       <button 
+                        onClick={() => handleDelete(testimonial.id)}
                         style={{ 
                           color: '#dc2626', 
                           background: 'none', 

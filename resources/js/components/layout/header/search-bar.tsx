@@ -34,7 +34,6 @@ export default function SearchBar() {
   const handleSearch = () => {
     if (searchQuery.trim()) {
       // Could redirect to a search results page if needed
-      console.log('Searching for:', searchQuery);
     }
   };
 

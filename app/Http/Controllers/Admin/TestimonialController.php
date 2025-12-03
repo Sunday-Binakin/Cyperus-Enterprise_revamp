@@ -16,8 +16,7 @@ class TestimonialController extends Controller
 {
     public function index(Request $request): Response
     {
-        $query = Testimonial::withTrashed()
-            ->with(['creator', 'updater'])
+        $query = Testimonial::with(['creator', 'updater'])
             ->orderBy('sort_order')
             ->orderBy('created_at', 'desc');
 
@@ -34,11 +33,14 @@ class TestimonialController extends Controller
         // Filter by status
         if ($request->filled('status')) {
             if ($request->status === 'active') {
-                $query->whereNull('deleted_at')->where('is_active', true);
+                $query->where('is_active', true);
             } elseif ($request->status === 'inactive') {
-                $query->whereNull('deleted_at')->where('is_active', false);
+                $query->where('is_active', false);
             } elseif ($request->status === 'deleted') {
-                $query->whereNotNull('deleted_at');
+                $query = Testimonial::withTrashed()->with(['creator', 'updater'])
+                    ->whereNotNull('deleted_at')
+                    ->orderBy('sort_order')
+                    ->orderBy('created_at', 'desc');
             }
         }
 
