@@ -182,22 +182,15 @@ class CheckoutController extends Controller
 
             DB::commit();
 
-            // Return the payment reference and authorization URL for frontend processing
-            Log::info('Returning success response with payment data', [
+            // Redirect directly to Paystack payment page
+            Log::info('Redirecting to Paystack payment page', [
                 'reference' => $reference,
                 'amount' => $total,
                 'order_number' => $order->order_number,
                 'authorization_url' => $paymentData['data']['authorization_url'],
             ]);
             
-            return redirect()->route('checkout')->with([
-                'payment_reference' => $reference,
-                'order_number' => $order->order_number,
-                'payment_amount' => $total,
-                'customer_email' => $validated['customer_email'],
-                'authorization_url' => $paymentData['data']['authorization_url'],
-                'success' => 'Order created successfully. Redirecting to payment...',
-            ]);
+            return redirect()->away($paymentData['data']['authorization_url']);
 
         } catch (\Exception $e) {
             DB::rollBack();
