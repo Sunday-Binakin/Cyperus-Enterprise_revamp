@@ -23,8 +23,12 @@ export default function AuthSimpleLayout({
                             href={home()}
                             className="flex flex-col items-center gap-2 font-medium"
                         >
-                            <div className="mb-1 flex h-9 w-9 items-center justify-center rounded-md">
-                                <AppLogoIcon className="size-9 fill-current text-[var(--foreground)] dark:text-white" />
+                            <div className="mb-4 flex items-center justify-center">
+                                <img 
+                                    src="/images/clients/logo.png" 
+                                    alt="Cyperus Enterprise" 
+                                    className="h-20 w-auto"
+                                />
                             </div>
                             <span className="sr-only">{title}</span>
                         </Link>

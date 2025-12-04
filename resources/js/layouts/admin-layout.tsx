@@ -16,6 +16,7 @@ import {
   ChefHat
 } from 'lucide-react';
 import { useState, ReactNode } from 'react';
+import Swal from 'sweetalert2';
 
 interface Notification {
   id: number;
@@ -44,8 +45,24 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const { admin } = usePage<PageProps>().props;
 
-  const handleSignOut = () => {
-    if (confirm('Are you sure you want to sign out?')) {
+  const handleSignOut = async () => {
+    const result = await Swal.fire({
+      title: 'Sign Out',
+      text: 'Are you sure you want to sign out?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Sign Out',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#dc2626',
+      cancelButtonColor: '#6b7280',
+      background: '#1f2937',
+      color: '#fff',
+      customClass: {
+        popup: 'border border-white/10',
+      },
+    });
+
+    if (result.isConfirmed) {
       router.post('/logout');
     }
   };
