@@ -47,12 +47,9 @@ class HomeController extends Controller
                 ];
             });
 
-        // Get active testimonials with actual images (not default.jpg)
+        // Get active testimonials
         $testimonials = \App\Models\Testimonial::active()
             ->ordered()
-            ->where('image', '!=', 'default.jpg')
-            ->whereNotNull('image')
-            ->where('image', '!=', '')
             ->get()
             ->map(function ($testimonial) {
                 return [

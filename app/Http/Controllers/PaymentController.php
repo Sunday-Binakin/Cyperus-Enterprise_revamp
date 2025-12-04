@@ -151,7 +151,7 @@ class PaymentController extends Controller
                 DB::commit();
 
                 Log::info('Payment failed for order: ' . $order->order_number, [
-                    'paystack_status' => $paymentStatus,
+                    'paystack_status' => $paystackStatus,
                     'reference' => $reference
                 ]);
 

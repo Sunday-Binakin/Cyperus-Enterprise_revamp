@@ -37,10 +37,7 @@ class TestimonialController extends Controller
             } elseif ($request->status === 'inactive') {
                 $query->where('is_active', false);
             } elseif ($request->status === 'deleted') {
-                $query = Testimonial::withTrashed()->with(['creator', 'updater'])
-                    ->whereNotNull('deleted_at')
-                    ->orderBy('sort_order')
-                    ->orderBy('created_at', 'desc');
+                $query->withTrashed()->whereNotNull('deleted_at');
             }
         }
 

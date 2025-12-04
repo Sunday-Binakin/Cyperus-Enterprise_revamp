@@ -112,16 +112,13 @@ export default function CartPopover({ onClose }: CartPopoverProps) {
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <button
-                onClick={() => {
-                  onClose?.();
-                  // Use window.location for immediate navigation to ensure popover closes
-                  window.location.href = '/cart';
-                }}
+              <Link
+                href="/cart"
+                onClick={() => onClose?.()}
                 className="bg-gray-800 text-white px-4 py-3 rounded-lg text-center text-sm font-medium hover:bg-gray-700 transition-colors border border-gray-700"
               >
                 View Basket
-              </button>
+              </Link>
               <button
                 onClick={handleProceedToCheckout}
                 className="bg-[#EFE554] text-black px-4 py-3 rounded-lg text-center text-sm hover:bg-[#dbd348] transition-colors font-semibold"

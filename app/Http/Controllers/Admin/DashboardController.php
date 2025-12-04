@@ -47,7 +47,7 @@ class DashboardController extends Controller
         // Low stock products (less than 20 units)
         $lowStockProducts = (int) Product::where('stock', '<', 20)->count();
 
-        $dashboardData = [
+        return Inertia::render('admin/dashboard', [
             'stats' => [
                 'totalProducts' => $totalProducts,
                 'totalOrders' => $totalOrders,
@@ -56,10 +56,6 @@ class DashboardController extends Controller
             ],
             'recentOrders' => $recentOrders,
             'notifications' => $unreadNotifications,
-        ];
-
-        Log::info('Dashboard data being returned:', $dashboardData);
-
-        return Inertia::render('admin/dashboard', $dashboardData);
+        ]);
     }
 }

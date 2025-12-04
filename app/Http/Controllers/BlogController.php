@@ -95,6 +95,7 @@ class BlogController extends Controller
         $validated['blog_id'] = $blog->id;
         $validated['status'] = 'approved'; // Auto-approve comments
         $validated['approved_at'] = now();
+        $validated['approved_by'] = auth()->check() ? auth()->id() : null;
 
         BlogComment::create($validated);
 
