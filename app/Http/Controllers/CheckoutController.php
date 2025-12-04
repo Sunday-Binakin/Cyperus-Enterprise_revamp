@@ -91,13 +91,32 @@ class CheckoutController extends Controller
             $user = User::where('email', $validated['customer_email'])->first();
             
             if (!$user) {
+                // Generate a secure temporary password
+                $tempPassword = bin2hex(random_bytes(16));
+                
                 $user = User::create([
                     'name' => $validated['customer_name'],
                     'email' => $validated['customer_email'],
-                    'password' => Hash::make(uniqid()), // Random password, user can reset
+                    'password' => Hash::make($tempPassword),
                     'role' => 'customer',
                     'is_active' => true,
                 ]);
+
+                // Send password reset email so customer can set their password
+                try {
+                    \Illuminate\Support\Facades\Password::sendResetLink([
+                        'email' => $validated['customer_email']
+                    ]);
+                    
+                    Log::info('Password reset email sent to new customer', [
+                        'email' => $validated['customer_email']
+                    ]);
+                } catch (\Exception $e) {
+                    Log::warning('Failed to send password reset email to new customer', [
+                        'email' => $validated['customer_email'],
+                        'error' => $e->getMessage()
+                    ]);
+                }
             }
 
             // Create order (but don't reduce stock yet)
@@ -179,15 +198,26 @@ class CheckoutController extends Controller
 
             DB::commit();
 
+            // Validate Paystack authorization URL
+            if (!isset($paymentData['data']['authorization_url']) || empty($paymentData['data']['authorization_url'])) {
+                Log::error('Missing Paystack authorization URL', [
+                    'reference' => $reference,
+                    'paymentData' => $paymentData,
+                ]);
+                return redirect()->route('checkout')->withErrors([
+                    'error' => 'Payment initialization failed. Please try again.',
+                ]);
+            }
+
             // Redirect directly to Paystack payment page
             Log::info('Redirecting to Paystack payment page', [
                 'reference' => $reference,
                 'amount' => $total,
                 'order_number' => $order->order_number,
-                'authorization_url' => $paymentData['data']['authorization_url'],
             ]);
             
-            return redirect()->away($paymentData['data']['authorization_url']);
+            // Use Inertia's location() for external redirects to avoid CORS issues
+            return Inertia::location($paymentData['data']['authorization_url']);
 
         } catch (\Exception $e) {
             DB::rollBack();

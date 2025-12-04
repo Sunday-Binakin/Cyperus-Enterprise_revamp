@@ -19,9 +19,13 @@ const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => (
   <div className="bg-gray-900 text-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
     <div className="relative h-96">
       <img 
-        src={testimonial.image}
+        src={testimonial.image || '/images/clients/testimonial/default.jpg'}
         alt={testimonial.name}
         className="absolute inset-0 w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity duration-300"
+        onError={(e) => {
+          e.currentTarget.src = '/images/clients/testimonial/default.jpg';
+          e.currentTarget.onerror = null;
+        }}
       />
       <div className="absolute inset-0 flex flex-col justify-end p-6 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
         <span 

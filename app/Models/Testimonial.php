@@ -64,13 +64,22 @@ class Testimonial extends Model
             return null;
         }
 
-        // Handle old storage path format
-        if (str_contains($this->image, 'uploads/testimonials/')) {
-            $filename = basename($this->image);
-            return asset('storage/uploads/testimonials/' . $filename);
+        // If already a full URL (starts with http/https), return as is
+        if (str_starts_with($this->image, 'http://') || str_starts_with($this->image, 'https://')) {
+            return $this->image;
         }
 
-        // Handle new format (just filename)
+        // If starts with /storage/, it's already a full path
+        if (str_starts_with($this->image, '/storage/')) {
+            return asset($this->image);
+        }
+
+        // If contains storage path, it's already a storage path
+        if (str_contains($this->image, 'storage/')) {
+            return asset($this->image);
+        }
+
+        // Otherwise, assume it's just a filename in uploads/testimonials/
         return asset('storage/uploads/testimonials/' . $this->image);
     }
 }
