@@ -79,6 +79,11 @@ class Testimonial extends Model
             return asset($this->image);
         }
 
+        // If starts with uploads/testimonials/, add only the storage prefix
+        if (str_starts_with($this->image, 'uploads/testimonials/')) {
+            return asset('storage/' . $this->image);
+        }
+
         // Otherwise, assume it's just a filename in uploads/testimonials/
         return asset('storage/uploads/testimonials/' . $this->image);
     }

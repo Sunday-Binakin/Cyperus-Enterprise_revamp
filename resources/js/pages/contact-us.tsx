@@ -184,7 +184,7 @@ export default function ContactUs() {
               <div className="p-6">
                 <div className="text-4xl mb-4">📍</div>
                 <h3 className="text-xl font-bold text-white mb-2">Location</h3>
-                <p className="text-gray-300">Accra, Ghana</p>
+                <p className="text-gray-300">Amrahia, Accra, Ghana</p>
               </div>
               <div className="p-6">
                 <div className="text-4xl mb-4">📧</div>
@@ -194,7 +194,7 @@ export default function ContactUs() {
               <div className="p-6">
                 <div className="text-4xl mb-4">📞</div>
                 <h3 className="text-xl font-bold text-white mb-2">Phone</h3>
-                <p className="text-gray-300">+233 XX XXX XXXX</p>
+                <p className="text-gray-300">+233 50 432 1995</p>
               </div>
             </div>
           </div>
