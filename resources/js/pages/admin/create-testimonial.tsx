@@ -80,17 +80,17 @@ export default function CreateTestimonial({ categories }: Props) {
       <Head title="Create Testimonial" />
       
       {/* Header */}
-      <header className="bg-white shadow">
+      <header className="bg-gray-900 shadow-lg border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <Link
                 href="/admin/testimonials"
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-400 hover:text-white transition-colors"
               >
                 <ArrowLeft size={20} />
               </Link>
-              <h1 className="text-3xl font-bold text-gray-900">Create Testimonial</h1>
+              <h1 className="text-3xl font-bold text-white">Create Testimonial</h1>
             </div>
           </div>
         </div>
@@ -99,12 +99,12 @@ export default function CreateTestimonial({ categories }: Props) {
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="bg-white shadow-sm rounded-lg p-6">
+          <div className="bg-white/5 backdrop-blur-sm border border-white/10 shadow-lg rounded-lg p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               
               {/* Name */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Name *
                 </label>
                 <input
@@ -112,7 +112,7 @@ export default function CreateTestimonial({ categories }: Props) {
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 bg-black/30 border border-white/20 rounded-lg text-white placeholder-gray-500 focus:ring-[#EFE554] focus:border-[#EFE554]"
                   style={{ color: 'black' }}
                   required
                 />
@@ -121,7 +121,7 @@ export default function CreateTestimonial({ categories }: Props) {
 
               {/* Title */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Job Title *
                 </label>
                 <input
@@ -129,7 +129,7 @@ export default function CreateTestimonial({ categories }: Props) {
                   name="title"
                   value={formData.title}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 bg-black/30 border border-white/20 rounded-lg text-white placeholder-gray-500 focus:ring-[#EFE554] focus:border-[#EFE554]"
                   style={{ color: 'black' }}
                   required
                 />
@@ -138,7 +138,7 @@ export default function CreateTestimonial({ categories }: Props) {
 
               {/* Company */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Company *
                 </label>
                 <input
@@ -146,7 +146,7 @@ export default function CreateTestimonial({ categories }: Props) {
                   name="company"
                   value={formData.company}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 bg-black/30 border border-white/20 rounded-lg text-white placeholder-gray-500 focus:ring-[#EFE554] focus:border-[#EFE554]"
                   style={{ color: 'black' }}
                   required
                 />
@@ -155,7 +155,7 @@ export default function CreateTestimonial({ categories }: Props) {
 
               {/* Sort Order */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Sort Order
                 </label>
                 <input
@@ -164,7 +164,7 @@ export default function CreateTestimonial({ categories }: Props) {
                   value={formData.sort_order}
                   onChange={handleInputChange}
                   min="1"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 bg-black/30 border border-white/20 rounded-lg text-white placeholder-gray-500 focus:ring-[#EFE554] focus:border-[#EFE554]"
                   style={{ color: 'black' }}
                 />
                 {errors.sort_order && <p className="text-red-500 text-sm mt-1">{errors.sort_order}</p>}
@@ -172,7 +172,7 @@ export default function CreateTestimonial({ categories }: Props) {
 
               {/* Content */}
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Testimonial Content *
                 </label>
                 <textarea
@@ -180,7 +180,7 @@ export default function CreateTestimonial({ categories }: Props) {
                   value={formData.content}
                   onChange={handleInputChange}
                   rows={5}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 bg-black/30 border border-white/20 rounded-lg text-white placeholder-gray-500 focus:ring-[#EFE554] focus:border-[#EFE554]"
                   style={{ color: 'black' }}
                   placeholder="Enter the testimonial content..."
                   required
@@ -190,11 +190,11 @@ export default function CreateTestimonial({ categories }: Props) {
 
               {/* Image Upload */}
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Profile Image
                 </label>
                 <div className="flex items-center space-x-4">
-                  <label className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                  <label className="flex items-center justify-center px-4 py-2 border border-white/20 bg-black/30 rounded-lg cursor-pointer hover:bg-white/10 text-white transition-colors">
                     <Upload className="mr-2" size={16} />
                     Choose Image
                     <input
@@ -236,9 +236,9 @@ export default function CreateTestimonial({ categories }: Props) {
                     name="is_active"
                     checked={formData.is_active}
                     onChange={handleInputChange}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-[#4A651F] focus:ring-[#EFE554] border-white/20 rounded bg-black/30"
                   />
-                  <span className="text-sm font-medium text-gray-700">Active</span>
+                  <span className="text-sm font-medium text-gray-300">Active</span>
                 </label>
                 <p className="text-sm text-gray-500 mt-1">
                   Active testimonials will be displayed on the website
@@ -252,14 +252,14 @@ export default function CreateTestimonial({ categories }: Props) {
           <div className="flex justify-end space-x-3">
             <Link
               href="/admin/testimonials"
-              className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+              className="px-6 py-2 border border-white/20 text-gray-300 rounded-lg hover:bg-white/10 transition-colors"
             >
               Cancel
             </Link>
             <button
               type="submit"
               disabled={processing}
-              className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+              className="px-6 py-2 bg-[#4A651F] text-white rounded-lg hover:bg-[#5a7626] disabled:opacity-50 disabled:cursor-not-allowed flex items-center transition-colors"
             >
               <Save className="mr-2" size={16} />
               {processing ? 'Creating...' : 'Create Testimonial'}

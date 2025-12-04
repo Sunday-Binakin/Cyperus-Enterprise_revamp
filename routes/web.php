@@ -8,7 +8,6 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
-use App\Http\Controllers\FormSubmissionController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PaymentController;
@@ -42,14 +41,15 @@ Route::get('/order-success/{orderNumber}', [CheckoutController::class, 'success'
 Route::get('/payment/callback', [PaymentController::class, 'callback'])->name('payment.callback');
 Route::post('/payment/webhook', [PaymentController::class, 'webhook'])->name('payment.webhook');
 Route::get('/payment/status', [PaymentController::class, 'checkStatus'])->name('payment.status');
-Route::get('/payment-test', function() {
+Route::get('/payment-test', function () {
     return Inertia::render('payment-test');
 })->name('payment.test');
 
 // Test payment verification
-Route::get('/test-payment/{reference}', function($reference) {
-    $paystack = new \App\Services\PaystackService();
+Route::get('/test-payment/{reference}', function ($reference) {
+    $paystack = new \App\Services\PaystackService;
     $result = $paystack->verifyPayment($reference);
+
     return response()->json($result);
 });
 
@@ -82,15 +82,16 @@ Route::get('/international-distributors', function () {
     return inertia('international-distributors');
 })->name('international-distributors');
 
-Route::get('/recipes', function () {
-    return inertia('recipes');
-})->name('recipes');
+// Recipe Routes (Client)
+Route::get('/recipes', [\App\Http\Controllers\RecipeController::class, 'index'])->name('recipes');
+Route::get('/recipes/{recipe}', [\App\Http\Controllers\RecipeController::class, 'show'])->name('recipe.detail');
 
 // Dashboard redirect - redirect to home or admin based on role
 Route::get('/dashboard', function () {
     if (\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->role === 'admin') {
         return redirect('/admin');
     }
+
     return redirect('/');
 })->middleware('auth')->name('dashboard');
 
@@ -101,7 +102,7 @@ Route::get('/dashboard', function () {
 */
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin', 'log.activity'])->group(function () {
-    
+
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -126,8 +127,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin', 'log.activi
 
     // Blog Management
     Route::resource('blogs', \App\Http\Controllers\Admin\BlogController::class);
-    Route::post('blog-comments/{comment}/approve', [\App\Http\Controllers\Admin\BlogController::class, 'approveComment'])->name('blog-comments.approve');
-    Route::post('blog-comments/{comment}/reject', [\App\Http\Controllers\Admin\BlogController::class, 'rejectComment'])->name('blog-comments.reject');
+
+    // Recipe Management
+    Route::resource('recipes', \App\Http\Controllers\Admin\RecipeController::class);
 
     // Testimonials Management
     Route::resource('testimonials', TestimonialController::class);
@@ -138,27 +140,29 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin', 'log.activi
     // Notifications
     Route::get('notifications', function () {
         $notifications = \App\Models\Notification::latest()->paginate(20);
+
         return inertia('Admin/Notifications', ['notifications' => $notifications]);
     })->name('notifications.index');
 
     Route::post('notifications/{notification}/read', function (\App\Models\Notification $notification) {
         $notification->markAsRead();
-        
+
         // If the notification has a link, redirect to it
         if ($notification->link) {
             return redirect($notification->link);
         }
-        
+
         return back();
     })->name('notifications.read');
 
     // Activity Logs
     Route::get('activity-logs', function () {
         $logs = \App\Models\ActivityLog::with('user')->latest()->paginate(50);
+
         return inertia('Admin/ActivityLogs', ['logs' => $logs]);
     })->name('activity-logs.index');
 
-    // Messages 
+    // Messages
     Route::get('messages', [AdminMessageController::class, 'index'])->name('messages.index');
     Route::get('messages/{message}', [AdminMessageController::class, 'show'])->name('messages.show');
     Route::post('messages/{message}/mark-read', [AdminMessageController::class, 'markAsRead'])->name('messages.mark-read');

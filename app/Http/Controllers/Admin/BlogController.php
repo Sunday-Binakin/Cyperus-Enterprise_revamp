@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
-use App\Models\BlogComment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -19,8 +18,8 @@ class BlogController extends Controller
         // Search
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
-                $q->where('title', 'like', '%' . $request->search . '%')
-                  ->orWhere('content', 'like', '%' . $request->search . '%');
+                $q->where('title', 'like', '%'.$request->search.'%')
+                    ->orWhere('content', 'like', '%'.$request->search.'%');
             });
         }
 
@@ -67,9 +66,9 @@ class BlogController extends Controller
         // Handle image upload
         if ($request->hasFile('featured_image')) {
             $image = $request->file('featured_image');
-            $imageName = time() . '_' . Str::slug($validated['title']) . '.' . $image->getClientOriginalExtension();
+            $imageName = time().'_'.Str::slug($validated['title']).'.'.$image->getClientOriginalExtension();
             $imagePath = $image->storeAs('blog-images', $imageName, 'public');
-            $validated['featured_image'] = '/storage/' . $imagePath;
+            $validated['featured_image'] = '/storage/'.$imagePath;
         }
 
         // Set published_at if publishing
@@ -123,9 +122,9 @@ class BlogController extends Controller
             }
 
             $image = $request->file('featured_image');
-            $imageName = time() . '_' . Str::slug($validated['title']) . '.' . $image->getClientOriginalExtension();
+            $imageName = time().'_'.Str::slug($validated['title']).'.'.$image->getClientOriginalExtension();
             $imagePath = $image->storeAs('blog-images', $imageName, 'public');
-            $validated['featured_image'] = '/storage/' . $imagePath;
+            $validated['featured_image'] = '/storage/'.$imagePath;
         }
 
         // Set published_at if changing to published
@@ -151,19 +150,5 @@ class BlogController extends Controller
 
         return redirect()->route('admin.blogs.index')
             ->with('success', 'Blog post deleted successfully!');
-    }
-
-    public function approveComment(BlogComment $comment)
-    {
-        $comment->approve();
-
-        return back()->with('success', 'Comment approved successfully!');
-    }
-
-    public function rejectComment(BlogComment $comment)
-    {
-        $comment->reject();
-
-        return back()->with('success', 'Comment rejected successfully!');
     }
 }

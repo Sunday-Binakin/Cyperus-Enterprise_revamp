@@ -16,8 +16,8 @@ class BlogController extends Controller
         // Search
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
-                $q->where('title', 'like', '%' . $request->search . '%')
-                  ->orWhere('content', 'like', '%' . $request->search . '%');
+                $q->where('title', 'like', '%'.$request->search.'%')
+                    ->orWhere('content', 'like', '%'.$request->search.'%');
             });
         }
 
@@ -41,7 +41,7 @@ class BlogController extends Controller
         ]);
     }
 
-    public function show(string $slug)
+    public function show(string $slug, Request $request)
     {
         $blog = Blog::published()
             ->where('slug', $slug)
@@ -51,8 +51,12 @@ class BlogController extends Controller
             ->withCount('approvedComments')
             ->firstOrFail();
 
-        // Increment views
-        $blog->incrementViews();
+        // Increment views only once per session
+        $sessionKey = 'blog_viewed_'.$blog->id;
+        if (! $request->session()->has($sessionKey)) {
+            $blog->incrementViews();
+            $request->session()->put($sessionKey, true);
+        }
 
         // Get related blogs (same tags or recent)
         $relatedBlogs = Blog::published()
@@ -83,16 +87,17 @@ class BlogController extends Controller
         // Handle optional image upload for commenter
         if ($request->hasFile('customer_image')) {
             $image = $request->file('customer_image');
-            $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+            $imageName = time().'_'.uniqid().'.'.$image->getClientOriginalExtension();
             $imagePath = $image->storeAs('comments', $imageName, 'public');
-            $validated['customer_image'] = '/storage/' . $imagePath;
+            $validated['customer_image'] = '/storage/'.$imagePath;
         }
 
         $validated['blog_id'] = $blog->id;
-        $validated['status'] = 'pending'; // Admin must approve
+        $validated['status'] = 'approved'; // Auto-approve comments
+        $validated['approved_at'] = now();
 
         BlogComment::create($validated);
 
-        return back()->with('success', 'Thank you! Your comment is awaiting moderation.');
+        return back()->with('success', 'Thank you! Your comment has been posted.');
     }
 }

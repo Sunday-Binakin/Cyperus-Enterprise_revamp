@@ -46,13 +46,13 @@ export default function ProductsIndex({ products }: ProductsIndexProps) {
       <Head title="Manage Products" />
       
       {/* Header */}
-      <header className="bg-white shadow">
+      <header className="bg-gray-900 shadow-lg border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-bold text-gray-900">Manage Products</h1>
+            <h1 className="text-3xl font-bold text-white">Manage Products</h1>
             <Link
               href="/admin/products/create"
-              className="flex items-center gap-2 px-6 py-3 bg-amber-600 text-white rounded-lg hover:bg-amber-700 font-semibold"
+              className="flex items-center gap-2 px-6 py-3 bg-[#4A651F] text-white rounded-lg hover:bg-[#5a7626] font-semibold transition-colors"
             >
               <Plus className="w-5 h-5" />
               Add New Product
@@ -64,40 +64,40 @@ export default function ProductsIndex({ products }: ProductsIndexProps) {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Products Table */}
-          <div className="bg-white rounded-lg shadow overflow-hidden">
+          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg shadow-lg overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+              <table className="min-w-full divide-y divide-white/10">
+                <thead className="bg-white/5">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                       Product
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                       Category
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                       Price
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                       Stock
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="divide-y divide-white/10">
                   {products.data.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                      <td colSpan={6} className="px-6 py-12 text-center text-gray-400">
                         <div className="flex flex-col items-center gap-4">
                           <p className="text-lg">No products found</p>
                           <Link
                             href="/admin/products/create"
-                            className="text-amber-600 hover:text-amber-700 font-semibold"
+                            className="text-[#4A651F] hover:text-[#5a7626] font-semibold transition-colors"
                           >
                             Add your first product →
                           </Link>
@@ -106,7 +106,7 @@ export default function ProductsIndex({ products }: ProductsIndexProps) {
                     </tr>
                   ) : (
                     products.data.map((product) => (
-                      <tr key={product.id} className="hover:bg-gray-50">
+                      <tr key={product.id} className="hover:bg-white/5 transition-colors">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             <div className="h-12 w-12 flex-shrink-0">
@@ -117,17 +117,17 @@ export default function ProductsIndex({ products }: ProductsIndexProps) {
                                   alt={product.name}
                                 />
                               ) : (
-                                <div className="h-12 w-12 rounded bg-gray-200 flex items-center justify-center">
-                                  <span className="text-gray-400 text-xs">No image</span>
+                                <div className="h-12 w-12 rounded bg-white/10 flex items-center justify-center">
+                                  <span className="text-gray-500 text-xs">No image</span>
                                 </div>
                               )}
                             </div>
                             <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-900">
+                              <div className="text-sm font-medium text-white">
                                 {product.name}
                               </div>
                               {product.is_featured && (
-                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-[#EFE554]/20 text-[#EFE554]">
                                   Featured
                                 </span>
                               )}
@@ -135,10 +135,10 @@ export default function ProductsIndex({ products }: ProductsIndexProps) {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="text-sm text-gray-900">{product.category.name}</span>
+                          <span className="text-sm text-gray-300">{product.category.name}</span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="text-sm font-semibold text-gray-900">
+                          <span className="text-sm font-semibold text-white">
                             GH₵{parseFloat(product.price.toString()).toFixed(2)}
                           </span>
                         </td>
@@ -146,10 +146,10 @@ export default function ProductsIndex({ products }: ProductsIndexProps) {
                           <span
                             className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                               product.stock < 20
-                                ? 'bg-red-100 text-red-800'
+                                ? 'bg-red-500/20 text-red-400'
                                 : product.stock < 50
-                                ? 'bg-yellow-100 text-yellow-800'
-                                : 'bg-green-100 text-green-800'
+                                ? 'bg-yellow-500/20 text-yellow-400'
+                                : 'bg-green-500/20 text-green-400'
                             }`}
                           >
                             {product.stock} units
@@ -158,10 +158,10 @@ export default function ProductsIndex({ products }: ProductsIndexProps) {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <button
                             onClick={() => toggleStatus(product.id)}
-                            className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${
+                            className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                               product.is_active
-                                ? 'bg-green-100 text-green-800 hover:bg-green-200'
-                                : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                                ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30'
+                                : 'bg-gray-500/20 text-gray-400 hover:bg-gray-500/30'
                             }`}
                           >
                             {product.is_active ? (
@@ -181,14 +181,14 @@ export default function ProductsIndex({ products }: ProductsIndexProps) {
                           <div className="flex items-center justify-end gap-2">
                             <Link
                               href={`/admin/products/${product.id}/edit`}
-                              className="text-blue-600 hover:text-blue-900 p-2 hover:bg-blue-50 rounded"
+                              className="text-blue-400 hover:text-blue-300 p-2 hover:bg-blue-500/10 rounded transition-colors"
                             >
                               <Edit className="w-4 h-4" />
                             </Link>
                             <button
                               onClick={() => handleDelete(product.id)}
                               disabled={deleting === product.id}
-                              className="text-red-600 hover:text-red-900 p-2 hover:bg-red-50 rounded disabled:opacity-50"
+                              className="text-red-400 hover:text-red-300 p-2 hover:bg-red-500/10 rounded disabled:opacity-50 transition-colors"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -203,9 +203,9 @@ export default function ProductsIndex({ products }: ProductsIndexProps) {
 
             {/* Pagination */}
             {products.data.length > 0 && products.meta && products.links && (
-              <div className="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
+              <div className="bg-white/5 px-4 py-3 border-t border-white/10 sm:px-6">
                 <div className="flex items-center justify-between">
-                  <div className="text-sm text-gray-700">
+                  <div className="text-sm text-gray-300">
                     Showing <span className="font-medium">{products.meta.from || 1}</span> to{' '}
                     <span className="font-medium">{products.meta.to || 0}</span> of{' '}
                     <span className="font-medium">{products.meta.total || 0}</span> products
@@ -215,12 +215,12 @@ export default function ProductsIndex({ products }: ProductsIndexProps) {
                       <Link
                         key={index}
                         href={link.url || '#'}
-                        className={`px-3 py-1 rounded ${
+                        className={`px-3 py-1 rounded transition-colors ${
                           link.active
-                            ? 'bg-amber-600 text-white'
+                            ? 'bg-[#4A651F] text-white'
                             : link.url
-                            ? 'bg-white text-gray-700 hover:bg-gray-50 border'
-                            : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                            ? 'bg-white/10 text-gray-300 hover:bg-white/20 border border-white/20'
+                            : 'bg-white/5 text-gray-600 cursor-not-allowed'
                         }`}
                         dangerouslySetInnerHTML={{ __html: link.label }}
                       />

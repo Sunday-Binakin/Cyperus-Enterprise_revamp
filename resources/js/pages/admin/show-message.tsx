@@ -30,15 +30,15 @@ export default function ShowMessage({ message }: Props) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'unread':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-500/20 text-red-400';
       case 'read':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-500/20 text-blue-400';
       case 'replied':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-500/20 text-green-400';
       case 'archived':
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-500/20 text-gray-400';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-500/20 text-gray-400';
     }
   };
 
@@ -60,27 +60,22 @@ export default function ShowMessage({ message }: Props) {
       <Head title={`Message from ${message.name}`} />
       
       {/* Header */}
-      <header style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '24px 20px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <header className="bg-gray-900 shadow-lg border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
               <Link
                 href="/admin/messages"
-                style={{ color: '#6b7280', textDecoration: 'none' }}
+                className="text-gray-400 hover:text-white transition-colors"
               >
                 <ArrowLeft size={20} />
               </Link>
-              <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827', margin: 0 }}>
+              <h1 className="text-2xl font-bold text-white">
                 Message Details
               </h1>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <span style={{
-                padding: '6px 12px',
-                borderRadius: '9999px',
-                fontSize: '14px',
-                fontWeight: '500'
-              }} className={getStatusColor(message.status)}>
+            <div className="flex items-center gap-3">
+              <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(message.status)}`}>
                 {message.status.charAt(0).toUpperCase() + message.status.slice(1)}
               </span>
             </div>
@@ -89,40 +84,29 @@ export default function ShowMessage({ message }: Props) {
       </header>
 
       {/* Main Content */}
-      <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '32px 20px' }}>
-        <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg shadow-lg overflow-hidden">
           
           {/* Message Header */}
-          <div style={{ padding: '32px', borderBottom: '1px solid #e5e7eb' }}>
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '24px' }}>
-              <div style={{ flex: 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                  <div style={{ 
-                    width: '48px', 
-                    height: '48px', 
-                    backgroundColor: '#3b82f6', 
-                    borderRadius: '50%', 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center',
-                    color: 'white',
-                    fontSize: '20px',
-                    fontWeight: 'bold'
-                  }}>
+          <div className="p-8 border-b border-white/10">
+            <div className="flex items-start justify-between mb-6">
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-12 h-12 bg-[#4A651F] rounded-full flex items-center justify-center text-white text-xl font-bold">
                     {message.name.charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <h2 style={{ fontSize: '20px', fontWeight: 'bold', color: '#111827', margin: 0 }}>
+                    <h2 className="text-xl font-bold text-white">
                       {message.name}
                     </h2>
-                    <p style={{ color: '#6b7280', margin: 0, fontSize: '14px' }}>
+                    <p className="text-gray-400 text-sm">
                       {getTypeLabel(message.type)}
                     </p>
                   </div>
                 </div>
                 
                 {message.subject && (
-                  <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#374151', marginBottom: '16px' }}>
+                  <h3 className="text-lg font-semibold text-gray-300 mb-4">
                     {message.subject}
                   </h3>
                 )}
@@ -130,62 +114,62 @@ export default function ShowMessage({ message }: Props) {
             </div>
 
             {/* Contact Information Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               
-              <div style={{ backgroundColor: '#f9fafb', padding: '16px', borderRadius: '8px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                  <Mail size={16} style={{ color: '#6b7280' }} />
-                  <span style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Email</span>
+              <div className="bg-black/30 border border-white/10 p-4 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <Mail size={16} className="text-gray-400" />
+                  <span className="text-sm font-medium text-gray-400">Email</span>
                 </div>
-                <p style={{ color: '#111827', margin: 0, wordBreak: 'break-word' }}>{message.email}</p>
+                <p className="text-white break-words">{message.email}</p>
               </div>
 
               {message.phone && (
-                <div style={{ backgroundColor: '#f9fafb', padding: '16px', borderRadius: '8px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                    <Phone size={16} style={{ color: '#6b7280' }} />
-                    <span style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Phone</span>
+                <div className="bg-black/30 border border-white/10 p-4 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Phone size={16} className="text-gray-400" />
+                    <span className="text-sm font-medium text-gray-400">Phone</span>
                   </div>
-                  <p style={{ color: '#111827', margin: 0 }}>{message.phone}</p>
+                  <p className="text-white">{message.phone}</p>
                 </div>
               )}
 
               {message.company && (
-                <div style={{ backgroundColor: '#f9fafb', padding: '16px', borderRadius: '8px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                    <Building size={16} style={{ color: '#6b7280' }} />
-                    <span style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Company</span>
+                <div className="bg-black/30 border border-white/10 p-4 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Building size={16} className="text-gray-400" />
+                    <span className="text-sm font-medium text-gray-400">Company</span>
                   </div>
-                  <p style={{ color: '#111827', margin: 0 }}>{message.company}</p>
+                  <p className="text-white">{message.company}</p>
                 </div>
               )}
 
               {message.country && (
-                <div style={{ backgroundColor: '#f9fafb', padding: '16px', borderRadius: '8px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                    <User size={16} style={{ color: '#6b7280' }} />
-                    <span style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Location</span>
+                <div className="bg-black/30 border border-white/10 p-4 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <User size={16} className="text-gray-400" />
+                    <span className="text-sm font-medium text-gray-400">Location</span>
                   </div>
-                  <p style={{ color: '#111827', margin: 0 }}>{message.country}</p>
+                  <p className="text-white">{message.country}</p>
                 </div>
               )}
 
               {message.business_type && (
-                <div style={{ backgroundColor: '#f9fafb', padding: '16px', borderRadius: '8px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                    <Building size={16} style={{ color: '#6b7280' }} />
-                    <span style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Business Type</span>
+                <div className="bg-black/30 border border-white/10 p-4 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Building size={16} className="text-gray-400" />
+                    <span className="text-sm font-medium text-gray-400">Business Type</span>
                   </div>
-                  <p style={{ color: '#111827', margin: 0 }}>{message.business_type}</p>
+                  <p className="text-white">{message.business_type}</p>
                 </div>
               )}
 
-              <div style={{ backgroundColor: '#f9fafb', padding: '16px', borderRadius: '8px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                  <Calendar size={16} style={{ color: '#6b7280' }} />
-                  <span style={{ fontSize: '14px', fontWeight: '500', color: '#374151' }}>Received</span>
+              <div className="bg-black/30 border border-white/10 p-4 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <Calendar size={16} className="text-gray-400" />
+                  <span className="text-sm font-medium text-gray-400">Received</span>
                 </div>
-                <p style={{ color: '#111827', margin: 0 }}>
+                <p className="text-white">
                   {new Date(message.created_at).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'long',
@@ -200,23 +184,12 @@ export default function ShowMessage({ message }: Props) {
           </div>
 
           {/* Message Content */}
-          <div style={{ padding: '32px' }}>
-            <h4 style={{ fontSize: '16px', fontWeight: '600', color: '#374151', marginBottom: '16px' }}>
+          <div className="p-8">
+            <h4 className="text-lg font-semibold text-white mb-4">
               Message Content
             </h4>
-            <div style={{ 
-              backgroundColor: '#f9fafb', 
-              padding: '20px', 
-              borderRadius: '8px',
-              borderLeft: '4px solid #3b82f6'
-            }}>
-              <p style={{ 
-                color: '#111827', 
-                lineHeight: '1.6', 
-                margin: 0,
-                whiteSpace: 'pre-wrap',
-                wordBreak: 'break-word'
-              }}>
+            <div className="bg-black/30 border-l-4 border-[#4A651F] p-5 rounded-lg">
+              <p className="text-gray-300 leading-relaxed whitespace-pre-wrap break-words">
                 {message.message}
               </p>
             </div>
@@ -224,50 +197,50 @@ export default function ShowMessage({ message }: Props) {
 
           {/* Additional Details for Distributor/Export inquiries */}
           {message.additional_data && (message.type === 'distributor' || message.type === 'export') && (
-            <div style={{ padding: '32px', borderTop: '1px solid #e5e7eb' }}>
-              <h4 style={{ fontSize: '16px', fontWeight: '600', color: '#374151', marginBottom: '16px' }}>
+            <div className="p-8 border-t border-white/10">
+              <h4 className="text-lg font-semibold text-white mb-4">
                 {message.type === 'distributor' ? 'Distributor Details' : 'Export Details'}
               </h4>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px' }}>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 
                 {/* Distributor specific fields */}
                 {message.type === 'distributor' && (
                   <>
                     {message.additional_data.business_years && (
-                      <div style={{ backgroundColor: '#f3f4f6', padding: '16px', borderRadius: '8px' }}>
-                        <span style={{ fontSize: '14px', fontWeight: '500', color: '#374151', display: 'block', marginBottom: '4px' }}>
+                      <div className="bg-black/30 border border-white/10 p-4 rounded-lg">
+                        <span className="text-sm font-medium text-gray-400 block mb-1">
                           Years in Business
                         </span>
-                        <p style={{ color: '#111827', margin: 0 }}>{message.additional_data.business_years}</p>
+                        <p className="text-white">{message.additional_data.business_years}</p>
                       </div>
                     )}
                     
                     {message.additional_data.currently_distributing && (
-                      <div style={{ backgroundColor: '#f3f4f6', padding: '16px', borderRadius: '8px' }}>
-                        <span style={{ fontSize: '14px', fontWeight: '500', color: '#374151', display: 'block', marginBottom: '4px' }}>
+                      <div className="bg-black/30 border border-white/10 p-4 rounded-lg">
+                        <span className="text-sm font-medium text-gray-400 block mb-1">
                           Currently Distributing
                         </span>
-                        <p style={{ color: '#111827', margin: 0 }}>
+                        <p className="text-white">
                           {message.additional_data.currently_distributing === 'yes' ? 'Yes' : 'No'}
                         </p>
                       </div>
                     )}
                     
                     {message.additional_data.current_brands && (
-                      <div style={{ backgroundColor: '#f3f4f6', padding: '16px', borderRadius: '8px' }}>
-                        <span style={{ fontSize: '14px', fontWeight: '500', color: '#374151', display: 'block', marginBottom: '4px' }}>
+                      <div className="bg-black/30 border border-white/10 p-4 rounded-lg">
+                        <span className="text-sm font-medium text-gray-400 block mb-1">
                           Current Brands
                         </span>
-                        <p style={{ color: '#111827', margin: 0, whiteSpace: 'pre-wrap' }}>{message.additional_data.current_brands}</p>
+                        <p className="text-white whitespace-pre-wrap">{message.additional_data.current_brands}</p>
                       </div>
                     )}
                     
                     {message.additional_data.interested_products && (
-                      <div style={{ backgroundColor: '#f3f4f6', padding: '16px', borderRadius: '8px' }}>
-                        <span style={{ fontSize: '14px', fontWeight: '500', color: '#374151', display: 'block', marginBottom: '4px' }}>
+                      <div className="bg-black/30 border border-white/10 p-4 rounded-lg">
+                        <span className="text-sm font-medium text-gray-400 block mb-1">
                           Interested Products
                         </span>
-                        <p style={{ color: '#111827', margin: 0 }}>
+                        <p className="text-white">
                           {Array.isArray(message.additional_data.interested_products) 
                             ? message.additional_data.interested_products.join(', ')
                             : message.additional_data.interested_products
@@ -277,40 +250,40 @@ export default function ShowMessage({ message }: Props) {
                     )}
                     
                     {message.additional_data.monthly_quantity && (
-                      <div style={{ backgroundColor: '#f3f4f6', padding: '16px', borderRadius: '8px' }}>
-                        <span style={{ fontSize: '14px', fontWeight: '500', color: '#374151', display: 'block', marginBottom: '4px' }}>
+                      <div className="bg-black/30 border border-white/10 p-4 rounded-lg">
+                        <span className="text-sm font-medium text-gray-400 block mb-1">
                           Monthly Quantity
                         </span>
-                        <p style={{ color: '#111827', margin: 0 }}>{message.additional_data.monthly_quantity}</p>
+                        <p className="text-white">{message.additional_data.monthly_quantity}</p>
                       </div>
                     )}
                     
                     {message.additional_data.packaging_preference && (
-                      <div style={{ backgroundColor: '#f3f4f6', padding: '16px', borderRadius: '8px' }}>
-                        <span style={{ fontSize: '14px', fontWeight: '500', color: '#374151', display: 'block', marginBottom: '4px' }}>
+                      <div className="bg-black/30 border border-white/10 p-4 rounded-lg">
+                        <span className="text-sm font-medium text-gray-400 block mb-1">
                           Packaging Preference
                         </span>
-                        <p style={{ color: '#111827', margin: 0 }}>{message.additional_data.packaging_preference}</p>
+                        <p className="text-white">{message.additional_data.packaging_preference}</p>
                       </div>
                     )}
                     
                     {message.additional_data.import_experience && (
-                      <div style={{ backgroundColor: '#f3f4f6', padding: '16px', borderRadius: '8px' }}>
-                        <span style={{ fontSize: '14px', fontWeight: '500', color: '#374151', display: 'block', marginBottom: '4px' }}>
+                      <div className="bg-black/30 border border-white/10 p-4 rounded-lg">
+                        <span className="text-sm font-medium text-gray-400 block mb-1">
                           Import Experience
                         </span>
-                        <p style={{ color: '#111827', margin: 0 }}>
+                        <p className="text-white">
                           {message.additional_data.import_experience === 'yes' ? 'Yes' : 'No'}
                         </p>
                       </div>
                     )}
                     
                     {message.additional_data.shipping_method && (
-                      <div style={{ backgroundColor: '#f3f4f6', padding: '16px', borderRadius: '8px' }}>
-                        <span style={{ fontSize: '14px', fontWeight: '500', color: '#374151', display: 'block', marginBottom: '4px' }}>
+                      <div className="bg-black/30 border border-white/10 p-4 rounded-lg">
+                        <span className="text-sm font-medium text-gray-400 block mb-1">
                           Preferred Shipping Method
                         </span>
-                        <p style={{ color: '#111827', margin: 0 }}>{message.additional_data.shipping_method}</p>
+                        <p className="text-white">{message.additional_data.shipping_method}</p>
                       </div>
                     )}
                   </>
@@ -320,11 +293,11 @@ export default function ShowMessage({ message }: Props) {
                 {message.type === 'export' && (
                   <>
                     {message.additional_data.products_interested && (
-                      <div style={{ backgroundColor: '#f3f4f6', padding: '16px', borderRadius: '8px' }}>
-                        <span style={{ fontSize: '14px', fontWeight: '500', color: '#374151', display: 'block', marginBottom: '4px' }}>
+                      <div className="bg-black/30 border border-white/10 p-4 rounded-lg">
+                        <span className="text-sm font-medium text-gray-400 block mb-1">
                           Products Interested
                         </span>
-                        <p style={{ color: '#111827', margin: 0 }}>
+                        <p className="text-white">
                           {Array.isArray(message.additional_data.products_interested) 
                             ? message.additional_data.products_interested.join(', ')
                             : message.additional_data.products_interested
@@ -334,20 +307,20 @@ export default function ShowMessage({ message }: Props) {
                     )}
                     
                     {message.additional_data.order_quantity && (
-                      <div style={{ backgroundColor: '#f3f4f6', padding: '16px', borderRadius: '8px' }}>
-                        <span style={{ fontSize: '14px', fontWeight: '500', color: '#374151', display: 'block', marginBottom: '4px' }}>
+                      <div className="bg-black/30 border border-white/10 p-4 rounded-lg">
+                        <span className="text-sm font-medium text-gray-400 block mb-1">
                           Order Quantity
                         </span>
-                        <p style={{ color: '#111827', margin: 0 }}>{message.additional_data.order_quantity}</p>
+                        <p className="text-white">{message.additional_data.order_quantity}</p>
                       </div>
                     )}
                     
                     {message.additional_data.additional_info && (
-                      <div style={{ backgroundColor: '#f3f4f6', padding: '16px', borderRadius: '8px', gridColumn: '1 / -1' }}>
-                        <span style={{ fontSize: '14px', fontWeight: '500', color: '#374151', display: 'block', marginBottom: '4px' }}>
+                      <div className="bg-black/30 border border-white/10 p-4 rounded-lg col-span-full">
+                        <span className="text-sm font-medium text-gray-400 block mb-1">
                           Additional Information
                         </span>
-                        <p style={{ color: '#111827', margin: 0, whiteSpace: 'pre-wrap' }}>{message.additional_data.additional_info}</p>
+                        <p className="text-white whitespace-pre-wrap">{message.additional_data.additional_info}</p>
                       </div>
                     )}
                   </>
@@ -359,14 +332,14 @@ export default function ShowMessage({ message }: Props) {
 
           {/* Message Status Info */}
           {(message.read_at || message.reader) && (
-            <div style={{ padding: '24px 32px', backgroundColor: '#f9fafb', borderTop: '1px solid #e5e7eb' }}>
-              <h4 style={{ fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '12px' }}>
+            <div className="px-8 py-6 bg-white/5 border-t border-white/10">
+              <h4 className="text-sm font-semibold text-white mb-3">
                 Status Information
               </h4>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '14px', color: '#6b7280' }}>
+              <div className="flex items-center gap-4 text-sm text-gray-400">
                 {message.read_at && (
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <CheckCircle size={14} style={{ color: '#10b981' }} />
+                  <span className="flex items-center gap-1">
+                    <CheckCircle size={14} className="text-green-400" />
                     Read on {new Date(message.read_at).toLocaleDateString()}
                   </span>
                 )}
@@ -378,34 +351,17 @@ export default function ShowMessage({ message }: Props) {
           )}
 
           {/* Action Buttons */}
-          <div style={{ padding: '24px 32px', backgroundColor: '#f9fafb', borderTop: '1px solid #e5e7eb' }}>
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+          <div className="px-8 py-6 bg-white/5 border-t border-white/10">
+            <div className="flex gap-3 justify-end">
               <button
                 onClick={() => router.post(`/admin/messages/${message.id}/mark-read`)}
-                style={{
-                  padding: '8px 16px',
-                  backgroundColor: '#10b981',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  cursor: 'pointer'
-                }}
+                className="px-4 py-2 bg-[#4A651F] hover:bg-[#5a7626] text-white rounded-lg text-sm font-medium transition-colors"
               >
                 Mark as Read
               </button>
               <Link
                 href="/admin/messages"
-                style={{
-                  padding: '8px 16px',
-                  backgroundColor: '#6b7280',
-                  color: 'white',
-                  borderRadius: '6px',
-                  textDecoration: 'none',
-                  fontSize: '14px',
-                  fontWeight: '500'
-                }}
+                className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg text-sm font-medium transition-colors"
               >
                 All Messages
               </Link>

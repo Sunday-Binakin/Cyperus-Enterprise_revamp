@@ -26,22 +26,22 @@ interface OrdersProps {
 export default function Orders({ orders }: OrdersProps) {
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
-      pending: 'bg-yellow-100 text-yellow-800',
-      processing: 'bg-blue-100 text-blue-800',
-      shipped: 'bg-purple-100 text-purple-800',
-      delivered: 'bg-green-100 text-green-800',
-      cancelled: 'bg-red-100 text-red-800',
+      pending: 'bg-yellow-500/20 text-yellow-400',
+      processing: 'bg-blue-500/20 text-blue-400',
+      shipped: 'bg-purple-500/20 text-purple-400',
+      delivered: 'bg-green-500/20 text-green-400',
+      cancelled: 'bg-red-500/20 text-red-400',
     };
-    return colors[status] || 'bg-gray-100 text-gray-800';
+    return colors[status] || 'bg-gray-500/20 text-gray-400';
   };
 
   const getPaymentStatusColor = (status: string) => {
     const colors: Record<string, string> = {
-      pending: 'bg-yellow-100 text-yellow-800',
-      paid: 'bg-green-100 text-green-800',
-      failed: 'bg-red-100 text-red-800',
+      pending: 'bg-yellow-500/20 text-yellow-400',
+      paid: 'bg-green-500/20 text-green-400',
+      failed: 'bg-red-500/20 text-red-400',
     };
-    return colors[status] || 'bg-gray-100 text-gray-800';
+    return colors[status] || 'bg-gray-500/20 text-gray-400';
   };
 
   return (
@@ -49,65 +49,65 @@ export default function Orders({ orders }: OrdersProps) {
       <Head title="Manage Orders" />
       
       {/* Header */}
-      <header className="bg-white shadow">
+      <header className="bg-gray-900 shadow-lg border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <h1 className="text-3xl font-bold text-gray-900">Manage Orders</h1>
+          <h1 className="text-3xl font-bold text-white">Manage Orders</h1>
         </div>
       </header>
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white shadow rounded-lg overflow-hidden">
+        <div className="bg-white/5 backdrop-blur-sm border border-white/10 shadow-lg rounded-lg overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-white/10">
+              <thead className="bg-white/5">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">
                     Order #
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">
                     Customer
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">
                     Total
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">
                     Payment
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">
                     Date
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="divide-y divide-white/10">
                 {orders.data.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
-                      <Package className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                    <td colSpan={6} className="px-6 py-12 text-center text-gray-400">
+                      <Package className="mx-auto h-12 w-12 text-gray-500 mb-4" />
                       <p className="text-lg">No orders yet</p>
                     </td>
                   </tr>
                 ) : (
                   orders.data.map((order) => (
-                    <tr key={order.id} className="hover:bg-gray-50">
+                    <tr key={order.id} className="hover:bg-white/5 transition-colors">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <Link
                           href={`/admin/orders/${order.id}`}
-                          className="text-amber-600 hover:text-amber-700 font-medium"
+                          className="text-[#4A651F] hover:text-[#5a7626] font-medium transition-colors"
                         >
                           {order.order_number}
                         </Link>
                       </td>
                       <td className="px-6 py-4">
                         <div>
-                          <p className="font-medium text-gray-900">{order.customer_name}</p>
-                          <p className="text-sm text-gray-500">{order.customer_email}</p>
+                          <p className="font-medium text-white">{order.customer_name}</p>
+                          <p className="text-sm text-gray-400">{order.customer_email}</p>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap font-semibold text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap font-semibold text-white">
                         GH₵{parseFloat(order.total).toFixed(2)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -120,7 +120,7 @@ export default function Orders({ orders }: OrdersProps) {
                           {order.status.toUpperCase()}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                         {new Date(order.created_at).toLocaleDateString()}
                       </td>
                     </tr>

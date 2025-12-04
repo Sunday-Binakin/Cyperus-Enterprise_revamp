@@ -17,9 +17,9 @@ class OrderController extends Controller
         // Search
         if ($request->has('search') && $request->search) {
             $query->where(function ($q) use ($request) {
-                $q->where('order_number', 'like', '%' . $request->search . '%')
-                  ->orWhere('customer_name', 'like', '%' . $request->search . '%')
-                  ->orWhere('customer_email', 'like', '%' . $request->search . '%');
+                $q->where('order_number', 'like', '%'.$request->search.'%')
+                    ->orWhere('customer_name', 'like', '%'.$request->search.'%')
+                    ->orWhere('customer_email', 'like', '%'.$request->search.'%');
             });
         }
 
@@ -59,7 +59,7 @@ class OrderController extends Controller
     {
         $order->load(['items.product', 'user']);
 
-        return Inertia::render('Admin/OrderDetail', [
+        return Inertia::render('admin/orders/show', [
             'order' => $order,
         ]);
     }
@@ -74,7 +74,7 @@ class OrderController extends Controller
         $order->update($validated);
 
         // If delivered, set delivered_at
-        if ($validated['status'] === 'delivered' && !$order->delivered_at) {
+        if ($validated['status'] === 'delivered' && ! $order->delivered_at) {
             $order->update(['delivered_at' => now()]);
         }
 
@@ -82,7 +82,7 @@ class OrderController extends Controller
         ActivityLog::logActivity(
             'updated',
             $order,
-            auth()->user()->name . ' changed order ' . $order->order_number . ' status from "' . $oldStatus . '" to "' . $validated['status'] . '"',
+            auth()->user()->name.' changed order '.$order->order_number.' status from "'.$oldStatus.'" to "'.$validated['status'].'"',
             ['status' => $oldStatus],
             ['status' => $validated['status']]
         );
@@ -103,7 +103,7 @@ class OrderController extends Controller
         ActivityLog::logActivity(
             'cancelled',
             $order,
-            auth()->user()->name . ' cancelled order: ' . $order->order_number
+            auth()->user()->name.' cancelled order: '.$order->order_number
         );
 
         return redirect()->route('admin.orders.index')

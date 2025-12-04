@@ -12,7 +12,8 @@ import {
   Menu,
   X,
   Bell,
-  Star
+  Star,
+  ChefHat
 } from 'lucide-react';
 import { useState, ReactNode } from 'react';
 
@@ -57,16 +58,17 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { name: 'Categories', href: '/admin/categories', icon: FolderTree },
     { name: 'Orders', href: '/admin/orders', icon: ShoppingCart },
     { name: 'Testimonials', href: '/admin/testimonials', icon: Star },
+    { name: 'Recipes', href: '/admin/recipes', icon: ChefHat },
     { name: 'Blogs', href: '/admin/blogs', icon: BookOpen },
     { name: 'Messages', href: '/admin/messages', icon: MessageSquare },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-black">
       {/* Mobile sidebar backdrop */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-gray-600 bg-opacity-75 z-20 lg:hidden"
+          className="fixed inset-0 bg-black bg-opacity-75 z-20 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -140,17 +142,17 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       {/* Main Content */}
       <div className="lg:pl-64">
         {/* Desktop Header */}
-        <header className="hidden lg:block bg-white border-b border-gray-200 sticky top-0 z-10">
+        <header className="hidden lg:block bg-gray-900 border-b border-white/10 sticky top-0 z-10">
           <div className="flex items-center justify-between h-16 px-6">
             <div className="flex items-center gap-4">
-              <h1 className="text-xl font-semibold text-gray-900">Admin Panel</h1>
+              <h1 className="text-xl font-semibold text-white">Admin Panel</h1>
             </div>
             
             {/* Notification Bell */}
             <div className="relative">
               <button
                 onClick={() => setNotificationsOpen(!notificationsOpen)}
-                className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition"
+                className="relative p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition"
               >
                 <Bell className="w-6 h-6" />
                 {totalUnread > 0 && (
@@ -170,23 +172,23 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                   />
                   
                   {/* Dropdown */}
-                  <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-40 max-h-96 overflow-y-auto">
-                    <div className="p-4 border-b border-gray-200">
-                      <h3 className="font-semibold text-gray-900">Notifications</h3>
-                      <p className="text-sm text-gray-500">{totalUnread} unread</p>
+                  <div className="absolute right-0 mt-2 w-80 bg-gray-800 rounded-lg shadow-lg border border-white/20 z-40 max-h-96 overflow-y-auto">
+                    <div className="p-4 border-b border-white/10">
+                      <h3 className="font-semibold text-white">Notifications</h3>
+                      <p className="text-sm text-gray-400">{totalUnread} unread</p>
                     </div>
                     
                     {admin?.unreadMessages && admin.unreadMessages > 0 && (
                       <Link
                         href="/admin/messages"
-                        className="block px-4 py-3 hover:bg-gray-50 border-b border-gray-100 transition"
+                        className="block px-4 py-3 hover:bg-white/5 border-b border-white/10 transition"
                         onClick={() => setNotificationsOpen(false)}
                       >
                         <div className="flex items-start gap-3">
-                          <MessageSquare className="w-5 h-5 text-blue-500 mt-0.5" />
+                          <MessageSquare className="w-5 h-5 text-blue-400 mt-0.5" />
                           <div className="flex-1">
-                            <p className="font-medium text-gray-900">New Messages</p>
-                            <p className="text-sm text-gray-600">
+                            <p className="font-medium text-white">New Messages</p>
+                            <p className="text-sm text-gray-400">
                               You have {admin.unreadMessages} unread {admin.unreadMessages === 1 ? 'message' : 'messages'}
                             </p>
                             <p className="text-xs text-gray-500 mt-1">Just now</p>
@@ -200,14 +202,14 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                         <Link
                           key={notification.id}
                           href={notification.link || '#'}
-                          className="block px-4 py-3 hover:bg-gray-50 border-b border-gray-100 transition"
+                          className="block px-4 py-3 hover:bg-white/5 border-b border-white/10 transition"
                           onClick={() => setNotificationsOpen(false)}
                         >
                           <div className="flex items-start gap-3">
-                            <div className="w-2 h-2 bg-blue-500 rounded-full mt-2" />
+                            <div className="w-2 h-2 bg-blue-400 rounded-full mt-2" />
                             <div className="flex-1">
-                              <p className="font-medium text-gray-900">{notification.title}</p>
-                              <p className="text-sm text-gray-600">{notification.message}</p>
+                              <p className="font-medium text-white">{notification.title}</p>
+                              <p className="text-sm text-gray-400">{notification.message}</p>
                               <p className="text-xs text-gray-500 mt-1">
                                 {new Date(notification.created_at).toLocaleDateString()}
                               </p>
@@ -217,8 +219,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                       ))
                     ) : (
                       !admin?.unreadMessages && (
-                        <div className="p-8 text-center text-gray-500">
-                          <Bell className="w-12 h-12 mx-auto mb-2 text-gray-400" />
+                        <div className="p-8 text-center text-gray-400">
+                          <Bell className="w-12 h-12 mx-auto mb-2 text-gray-600" />
                           <p>No new notifications</p>
                         </div>
                       )
@@ -231,11 +233,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </header>
 
         {/* Mobile Header */}
-        <header className="lg:hidden bg-white shadow-sm sticky top-0 z-10">
+        <header className="lg:hidden bg-gray-900 shadow-sm sticky top-0 z-10 border-b border-white/10">
           <div className="flex items-center justify-between h-16 px-4">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="text-gray-600 hover:text-gray-900"
+              className="text-gray-400 hover:text-white"
             >
               <Menu className="w-6 h-6" />
             </button>
@@ -243,13 +245,13 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               <div className="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold">C</span>
               </div>
-              <span className="font-bold text-gray-900">Cyperus Admin</span>
+              <span className="font-bold text-white">Cyperus Admin</span>
             </div>
             
             {/* Mobile Notification Bell */}
             <button
               onClick={() => setNotificationsOpen(!notificationsOpen)}
-              className="relative p-2 text-gray-600 hover:text-gray-900"
+              className="relative p-2 text-gray-400 hover:text-white"
             >
               <Bell className="w-6 h-6" />
               {totalUnread > 0 && (
