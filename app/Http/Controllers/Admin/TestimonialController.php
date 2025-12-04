@@ -33,9 +33,9 @@ class TestimonialController extends Controller
         // Filter by status
         if ($request->filled('status')) {
             if ($request->status === 'active') {
-                $query->where('is_active', true);
+                $query->whereNull('deleted_at')->where('is_active', true);
             } elseif ($request->status === 'inactive') {
-                $query->where('is_active', false);
+                $query->whereNull('deleted_at')->where('is_active', false);
             } elseif ($request->status === 'deleted') {
                 $query->withTrashed()->whereNotNull('deleted_at');
             }

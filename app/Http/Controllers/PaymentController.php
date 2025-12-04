@@ -42,11 +42,14 @@ class PaymentController extends Controller
 
         Log::info('Payment verification result', [
             'reference' => $reference,
-            'verification' => $verification
+            'status' => $verification['status']
         ]);
 
         if (!$verification['status']) {
-            Log::error('Payment verification failed', $verification);
+            Log::error('Payment verification failed', [
+                'reference' => $reference,
+                'status' => $verification['status']
+            ]);
             return redirect()->route('home')->with('error', 'Payment verification failed');
         }
 
@@ -171,10 +174,7 @@ class PaymentController extends Controller
      */
     public function webhook(Request $request)
     {
-        Log::info('Paystack webhook received', [
-            'headers' => $request->headers->all(),
-            'body' => $request->getContent()
-        ]);
+        Log::info('Paystack webhook received');
 
         // Verify webhook signature
         $signature = $request->header('x-paystack-signature');
@@ -191,7 +191,9 @@ class PaymentController extends Controller
         }
 
         $event = $request->all();
-        Log::info('Paystack webhook event', ['event' => $event]);
+        Log::info('Paystack webhook event', [
+            'event_type' => $event['event'] ?? 'unknown'
+        ]);
 
         // Handle different event types
         switch ($event['event']) {
@@ -311,16 +313,20 @@ class PaymentController extends Controller
 
     /**
      * Check payment status (for frontend polling)
+     * Requires the transaction reference and customer email for security
      */
     public function checkStatus(Request $request)
     {
         $reference = $request->get('reference');
+        $email = $request->get('email');
         
-        if (!$reference) {
-            return response()->json(['error' => 'Reference required'], 400);
+        if (!$reference || !$email) {
+            return response()->json(['error' => 'Reference and email required'], 400);
         }
 
-        $transaction = Transaction::where('reference', $reference)->first();
+        $transaction = Transaction::where('reference', $reference)
+            ->where('customer_email', $email)
+            ->first();
         
         if (!$transaction) {
             return response()->json(['error' => 'Transaction not found'], 404);
@@ -342,7 +348,6 @@ class PaymentController extends Controller
                         'status' => 'success',
                         'channel' => $paymentData['channel'] ?? null,
                         'paid_at' => now(),
-                        'gateway_response' => $paymentData,
                     ]);
 
                     $order = $transaction->order;
@@ -361,6 +366,11 @@ class PaymentController extends Controller
                     }
 
                     DB::commit();
+                    
+                    Log::info('Payment verified and order updated', [
+                        'reference' => $reference,
+                        'order_number' => $order->order_number,
+                    ]);
                 }
             }
         }

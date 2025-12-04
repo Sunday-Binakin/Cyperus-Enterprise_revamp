@@ -12,20 +12,6 @@ interface DashboardProps {
 }
 
 export default function Dashboard({ stats }: DashboardProps) {
-  // Check if stats is undefined or null
-  if (!stats) {
-    console.error('Stats prop is undefined or null');
-    return (
-      <AdminLayout>
-        <Head title="Admin Dashboard" />
-        <div className="p-8">
-          <div className="bg-red-500/20 border border-red-500 text-red-400 px-4 py-3 rounded">
-            <strong>Error:</strong> Dashboard statistics could not be loaded.
-          </div>
-        </div>
-      </AdminLayout>
-    );
-  }
 
   return (
     <AdminLayout>

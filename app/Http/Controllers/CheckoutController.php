@@ -28,13 +28,12 @@ class CheckoutController extends Controller
     {
         return Inertia::render('checkout', [
             'paystack_public_key' => $this->paystack->getPublicKey(),
-            'flash' => session('flash') ?? session()->all(),
         ]);
     }
 
     public function store(Request $request)
     {
-        Log::info('Checkout store method called', $request->all());
+        Log::info('Checkout store method called');
         
         $validated = $request->validate([
             'customer_name' => 'required|string|max:255',
@@ -163,9 +162,7 @@ class CheckoutController extends Controller
             Log::info('Payment initialization result', [
                 'reference' => $reference,
                 'amount' => $total,
-                'email' => $validated['customer_email'],
                 'status' => $paymentData['status'],
-                'response' => $paymentData
             ]);
 
             if (!$paymentData['status']) {
